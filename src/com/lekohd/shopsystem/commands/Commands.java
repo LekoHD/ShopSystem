@@ -1,5 +1,6 @@
 package com.lekohd.shopsystem.commands;
 
+import com.lekohd.shopsystem.Locale;
 import com.lekohd.shopsystem.ShopSystem;
 import com.lekohd.shopsystem.manager.MessageManager;
 import com.lekohd.shopsystem.villager.VillagerClass;
@@ -13,13 +14,13 @@ import org.bukkit.entity.Player;
 /**
  * Created by thorstenkoth on 26.05.15.
  */
-public class Commands implements CommandExecutor { //Command: /shopsystem ...
+public class Commands implements CommandExecutor { //Command: /shop...
 
     public void sendHelp(Player p)
     {
         MessageManager.getInstance().msg(p, MessageManager.MessageType.INFO, "Commands:");
-        p.sendMessage("/shopsystem place");
-        p.sendMessage("/shopsystem remove");
+        p.sendMessage("/shop place");
+        p.sendMessage("/shop remove");
     }
 
     @Override
@@ -28,6 +29,11 @@ public class Commands implements CommandExecutor { //Command: /shopsystem ...
         if(commandSender instanceof Player)
         {
             Player sender = (Player) commandSender;
+            if (!sender.hasPermission("shopsystem.admin"))
+            {
+                MessageManager.getInstance().msg(sender, MessageManager.MessageType.INFO, Locale.NO_PERMISSIONS.replace("%PERM%", "shopsystem.admin"));
+                return true;
+            }
             if(args.length == 0)
             {
                 this.sendHelp(sender);
@@ -62,8 +68,7 @@ public class Commands implements CommandExecutor { //Command: /shopsystem ...
                 if(args[0].equalsIgnoreCase("place"));
                 {
                     //Place Villager
-                    VillagerClass v = new VillagerClass(null, sender.getLocation());
-                    v.place();
+                    VillagerClass.place(sender.getLocation());
                     return true;
                 }
             }

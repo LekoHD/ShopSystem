@@ -8,7 +8,11 @@ package com.lekohd.shopsystem;
  */
 public class Locale {
 
+    /**
+     * All default messages can be found here
+     */
     public static String PLUGIN_PREFIX = "§3[ShopSystem]";
+    public static String NO_PERMISSIONS = "You don't have the required permissions (%PERM%)";
     public static String SHOP_GET_IT = "Get this Shop";
     public static String SHOP_CREATE = "Create your Shop";
     public static String SHOP_MENU = "Admin Shop menu";
@@ -28,5 +32,6 @@ public class Locale {
     public static String ITEM_SHOW_SHOP = "Open your Shop";
     public static String ITEM_EDIT_SHOP = "Edit your Shop";
     public static String ITEM_PRICE = "Coins: %PRICE%";
+    public static String ITEM_CHANGE_PROFESSION = "Change Villager Color";
 
 }

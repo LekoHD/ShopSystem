@@ -1,6 +1,7 @@
 package com.lekohd.shopsystem.item;
 
 import com.lekohd.shopsystem.Locale;
+import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -18,18 +19,36 @@ public class ItemCreation {
     private String name;
     private Material type;
     private String lore;
-    private int amount;
+    private int amount, professionID;
 
-    public ItemCreation(String name, Material type, String lore, int amount) {
+    public ItemCreation(String name, Material type, String lore, int amount, int professionID) {
         this.name = name;
         this.type = type;
         this.lore = lore;
         this.amount = amount;
+        this.professionID = professionID;
     }
 
     public ItemStack getItem()
     {
-        ItemStack i = new ItemStack(this.type, this.amount);
+        ItemStack i;
+        if(professionID > -1)
+        {
+            if(professionID == 0)
+            {
+                i = new ItemStack(this.type, this.amount, DyeColor.BROWN.getData());
+            }else
+            if(professionID == 1)
+            {
+                i = new ItemStack(this.type, this.amount, DyeColor.WHITE.getData());
+            }else
+            if(professionID == 2)
+            {
+                i = new ItemStack(this.type, this.amount, DyeColor.PINK.getData());
+            }else
+                i = new ItemStack(this.type, this.amount, DyeColor.BROWN.getData());
+        } else
+            i = new ItemStack(this.type, this.amount);
         ItemMeta m = i.getItemMeta();
         if (this.lore != null) {
             ArrayList l = new ArrayList();

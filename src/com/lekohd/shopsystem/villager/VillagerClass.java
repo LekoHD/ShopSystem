@@ -10,22 +10,25 @@ import org.bukkit.potion.PotionEffectType;
 
 
 public class VillagerClass {
-    public String name;
-    public Location loc;
+    public static String name;
+    public static Location loc;
+    public static int professionID = 0;
 
-    public VillagerClass(String name, Location loc)  //Villager color
+    /**
+     * Placing the shop villager at location
+     * @param location is player location
+     */
+    public static void place(Location location)
     {
-        if(name == null)
+        loc = location;
+        name = Locale.SHOP_GET_IT;
+        Villager v;
+        if(ShopSystem.settingsManager.getConfig().getBoolean("config.PlaceVillagerInMiddleOfBlock"))
         {
-            this.name = Locale.SHOP_GET_IT;
+            Location l = new Location(loc.getWorld(), loc.getBlockX() + 0.5, loc.getBlockY(), loc.getBlockZ() + 0.5);
+            v = (Villager) l.getWorld().spawnEntity(l, EntityType.VILLAGER);
         } else
-            this.name = name;
-        this.loc = loc;
-    }
-
-    public void place()
-    {
-        Villager v = (Villager) loc.getWorld().spawnEntity(loc, EntityType.VILLAGER);
+            v = (Villager) loc.getWorld().spawnEntity(loc, EntityType.VILLAGER);
         try {
             //ShopSystem.nmsManager.getProvider().noAI(v);
             //ShopSystem.nmsManager.getProvider().overwriteVillagerAI(v);
@@ -40,4 +43,32 @@ public class VillagerClass {
         v.setProfession(Villager.Profession.FARMER);
         //v.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 356000, 356000));
     }
+
+    /**
+     * switches the villager shop profession
+     * @param villager 's profession. If player click on ChangeProfession Item
+     * @param i current villager profession
+     */
+    public static void switchProfession(Villager villager, int i)
+    {
+        Villager v = villager;
+        i++;
+        if(i == 3 || i > 3)
+        {
+            i = 0;
+        }
+        professionID = i;
+        switch (professionID)
+        {
+            case 0: v.setProfession(Villager.Profession.FARMER);  //Brown
+                break;
+            case 1: v.setProfession(Villager.Profession.LIBRARIAN);  //White
+                break;
+            case 2: v.setProfession(Villager.Profession.PRIEST); //Pink
+                break;
+            default: v.setProfession(Villager.Profession.FARMER);
+                break;
+        }
+    }
+
 }

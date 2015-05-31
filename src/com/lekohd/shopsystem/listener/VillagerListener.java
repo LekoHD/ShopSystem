@@ -2,11 +2,12 @@ package com.lekohd.shopsystem.listener;
 
 import com.lekohd.shopsystem.Locale;
 import com.lekohd.shopsystem.ShopSystem;
+import com.lekohd.shopsystem.item.ItemCreation;
 import com.lekohd.shopsystem.util.ItemType;
-import net.minecraft.server.v1_8_R2.*;
+import com.lekohd.shopsystem.villager.VillagerClass;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_8_R2.entity.CraftLivingEntity;
+import org.bukkit.Material;
 import org.bukkit.entity.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
@@ -59,8 +60,18 @@ public class VillagerListener implements Listener {
                                     e.setCancelled(true);
                                     Inventory inv = Bukkit.createInventory(null, 9, Locale.SHOP_MENU);
                                     inv.setItem(0, ItemType.EDITSHOP.getItem());
-                                    inv.setItem(3, ItemType.CHANGENAME.getItem());
+                                    if(p.hasPermission("shopsystem.shop.changeName"))
+                                        inv.setItem(3, ItemType.CHANGENAME.getItem());
                                     inv.setItem(4, ItemType.SHOWSHOP.getItem());
+                                    if(p.hasPermission("shopsystem.shop.changeProfession")) {
+                                        if (v.getProfession() == Villager.Profession.FARMER)
+                                            VillagerClass.professionID = 0;
+                                        if (v.getProfession() == Villager.Profession.LIBRARIAN)
+                                            VillagerClass.professionID = 1;
+                                        if (v.getProfession() == Villager.Profession.PRIEST)
+                                            VillagerClass.professionID = 2;
+                                        inv.setItem(6, new ItemCreation(Locale.ITEM_CHANGE_PROFESSION, Material.WOOL, null, 1, VillagerClass.professionID).getItem());
+                                    }
                                     inv.setItem(8, ItemType.LEAVE.getItem());
                                     p.openInventory(inv);
                                 } else {
@@ -82,8 +93,18 @@ public class VillagerListener implements Listener {
                                 e.setCancelled(true);
                                 Inventory inv = Bukkit.createInventory(null, 9, Locale.SHOP_MENU);
                                 inv.setItem(0, ItemType.EDITSHOP.getItem());
-                                inv.setItem(3, ItemType.CHANGENAME.getItem());
+                                if(p.hasPermission("shopsystem.shop.changeName"))
+                                    inv.setItem(3, ItemType.CHANGENAME.getItem());
                                 inv.setItem(4, ItemType.SHOWSHOP.getItem());
+                                if(p.hasPermission("shopsystem.shop.changeProfession")) {
+                                    if (v.getProfession() == Villager.Profession.FARMER)
+                                        VillagerClass.professionID = 0;
+                                    if (v.getProfession() == Villager.Profession.LIBRARIAN)
+                                        VillagerClass.professionID = 1;
+                                    if (v.getProfession() == Villager.Profession.PRIEST)
+                                        VillagerClass.professionID = 2;
+                                    inv.setItem(6, new ItemCreation(Locale.ITEM_CHANGE_PROFESSION, Material.WOOL, null, 1, VillagerClass.professionID).getItem());
+                                }
                                 inv.setItem(8, ItemType.LEAVE.getItem());
                                 p.openInventory(inv);
                             } else {

@@ -26,6 +26,17 @@ import java.util.HashMap;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+/**
+ * @author Leon167, LekoHD
+ * @version 0.1
+ *
+ * @permissions:
+ *   - shopsystem.admin
+ *   - shopsystem.shop.changeProfession
+ *   - shopsystem.shop.changeName
+ *   - shopsystem.shop.create.<amount> amount =< config.ShopsPerUser
+ */
+
 public class ShopSystem extends JavaPlugin {
 
     public static ShopSystem instance;
@@ -42,6 +53,9 @@ public class ShopSystem extends JavaPlugin {
     public static HashMap<UUID, Integer> currentSlot = new HashMap<UUID, Integer>();
     public static HashMap<UUID, Boolean> editName = new HashMap<UUID, Boolean>();
 
+    /**
+     * Loading all shops and messages
+     */
     public void onEnable(){
         instance = this;
         settingsManager = new SettingsManager();
@@ -63,10 +77,17 @@ public class ShopSystem extends JavaPlugin {
         dataManager.loadAll();
     }
 
+
+    /**
+     * Saving all shops on disable
+     */
     public void onDisable(){
         dataManager.saveAll();
     }
 
+    /**
+     * Loading all messages
+     */
     public void loadLocale(){
         FileConfiguration locale;
         File lfile;
@@ -115,7 +136,9 @@ public class ShopSystem extends JavaPlugin {
     }
 
 
-
+    /**
+     * @return the Plugin instance
+     */
     public static ShopSystem getInstance(){
         return instance;
     }

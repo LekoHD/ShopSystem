@@ -4,9 +4,11 @@ import com.lekohd.shopsystem.Locale;
 import com.lekohd.shopsystem.ShopSystem;
 import com.lekohd.shopsystem.exception.ItemBuyException;
 import com.lekohd.shopsystem.item.ItemClass;
+import com.lekohd.shopsystem.item.ItemCreation;
 import com.lekohd.shopsystem.manager.InventoryManager;
 import com.lekohd.shopsystem.manager.MessageManager;
 import com.lekohd.shopsystem.util.ItemType;
+import com.lekohd.shopsystem.villager.VillagerClass;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -165,6 +167,28 @@ public class InventoryListener implements Listener {
                     MessageManager.getInstance().msg(p, MessageManager.MessageType.INFO, Locale.ENTER_NAME);
                     e.setCancelled(true);
                     p.closeInventory();
+                }
+                if(e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase(ItemType.CHANGEPROFESSION.getName()))
+                {
+                    for (Entity entity : ShopSystem.playerInShop.get(((Player) e.getWhoClicked()).getUniqueId()).getChunk().getEntities()) {
+                        Location loc = entity.getLocation();
+                        Location vLoc = ShopSystem.playerInShop.get(((Player) e.getWhoClicked()).getUniqueId());
+                        if (vLoc.getBlockX() == loc.getBlockX() && vLoc.getBlockY() == loc.getBlockY() && vLoc.getBlockZ() == loc.getBlockZ() && vLoc.getWorld() == loc.getWorld()) {
+                            if (entity instanceof Villager) {
+                                Villager v = (Villager) entity;
+                                VillagerClass.switchProfession(v ,VillagerClass.professionID);
+                                Inventory inv = Bukkit.createInventory(null, 9, Locale.SHOP_MENU);
+                                inv.setItem(0, ItemType.EDITSHOP.getItem());
+                                inv.setItem(3, ItemType.CHANGENAME.getItem());
+                                inv.setItem(4, ItemType.SHOWSHOP.getItem());
+                                inv.setItem(6, new ItemCreation(Locale.ITEM_CHANGE_PROFESSION, Material.WOOL, null, 1, VillagerClass.professionID).getItem());
+                                inv.setItem(8, ItemType.LEAVE.getItem());
+                                ((Player)e.getWhoClicked()).closeInventory();
+                                ((Player)e.getWhoClicked()).openInventory(inv);
+                            }
+                        }
+                    }
+                   e.setCancelled(true);
                 }
             }
 
