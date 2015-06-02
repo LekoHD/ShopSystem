@@ -1,11 +1,12 @@
 package com.lekohd.shopsystem.util;
 
 /**
- * Created by Leon on 19.05.2015.
- * Project DakvainLobby
+ * Created by Leon on 30.05.2015.
+ * Project ShopSystem
  * <p/>
  * Copyright (C) 2014 Leon167 { LekoHD
  */
+
 import java.util.ArrayList;
 
 import com.lekohd.shopsystem.Locale;

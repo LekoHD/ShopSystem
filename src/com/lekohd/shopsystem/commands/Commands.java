@@ -13,8 +13,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 
 /**
- * Created by thorstenkoth on 26.05.15.
+ * Created by Leon on 30.05.2015.
+ * Project ShopSystem
+ * <p/>
+ * Copyright (C) 2014 Leon167 { LekoHD
  */
+
 public class Commands implements CommandExecutor { //Command: /shop...
 
     public void sendHelp(Player p)

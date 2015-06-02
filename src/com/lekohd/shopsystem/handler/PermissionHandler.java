@@ -3,7 +3,6 @@ package com.lekohd.shopsystem.handler;
 import com.lekohd.shopsystem.ShopSystem;
 import org.bukkit.entity.Player;
 
-import java.util.UUID;
 
 /**
  * Created by Leon on 01.06.2015.

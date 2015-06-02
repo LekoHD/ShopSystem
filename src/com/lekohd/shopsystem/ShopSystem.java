@@ -29,6 +29,11 @@ import java.util.logging.Logger;
  * @author Leon167, LekoHD
  * @version 0.1
  *
+ * Created by Leon on 30.05.2015.
+ * Project ShopSystem
+ * <p/>
+ * Copyright (C) 2014 Leon167 { LekoHD
+ *
  * @permissions:
  *   - shopsystem.admin
  *   - shopsystem.shop.changeProfession

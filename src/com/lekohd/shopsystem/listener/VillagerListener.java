@@ -22,8 +22,12 @@ import org.bukkit.inventory.Inventory;
 import java.util.UUID;
 
 /**
- * Created by thorstenkoth on 26.05.15.
+ * Created by Leon on 30.05.2015.
+ * Project ShopSystem
+ * <p/>
+ * Copyright (C) 2014 Leon167 { LekoHD
  */
+
 public class VillagerListener implements Listener {
 
     @EventHandler

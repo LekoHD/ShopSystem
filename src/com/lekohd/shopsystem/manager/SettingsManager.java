@@ -10,6 +10,12 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Created by Leon on 30.05.2015.
+ * Project ShopSystem
+ * <p/>
+ * Copyright (C) 2014 Leon167 { LekoHD
+ */
 
 public class SettingsManager {
 	static SettingsManager instance = new SettingsManager();

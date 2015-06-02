@@ -12,6 +12,12 @@ import org.bukkit.potion.PotionEffectType;
 import java.util.HashMap;
 import java.util.UUID;
 
+/**
+ * Created by Leon on 30.05.2015.
+ * Project ShopSystem
+ * <p/>
+ * Copyright (C) 2014 Leon167 { LekoHD
+ */
 
 public class VillagerClass {
     public static String name;
