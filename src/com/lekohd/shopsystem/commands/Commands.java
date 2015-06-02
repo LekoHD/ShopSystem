@@ -10,6 +10,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Villager;
 
 /**
  * Created by thorstenkoth on 26.05.15.
@@ -51,15 +52,18 @@ public class Commands implements CommandExecutor { //Command: /shop...
                         ShopSystem.dataManager.removeShop(loc);
                         if(ShopSystem.dataManager.shopOwner.containsKey(loc))
                         {
+                            int shopAmount = ShopSystem.dataManager.shopAmount.get(ShopSystem.dataManager.shopOwner.get(loc));
+                            ShopSystem.dataManager.shopAmount.put(ShopSystem.dataManager.shopOwner.get(loc), shopAmount - 1);
                             ShopSystem.dataManager.shopOwner.remove(loc);
                         }
                         for(Entity entity : loc.getChunk().getEntities())
                         {
                             Location lo = entity.getLocation();
                             Location location = new Location (lo.getWorld(), lo.getBlockX(), lo.getBlockY(), lo.getBlockZ());
-                            if(location == loc)
+                            if(location.getBlockX() == loc.getBlockX() && location.getBlockY() == loc.getBlockY() && location.getBlockZ() == loc.getBlockZ() && location.getWorld() == loc.getWorld())
                             {
-                                entity.remove();
+                                if(entity instanceof Villager)
+                                    entity.remove();
                             }
                         }
                     }

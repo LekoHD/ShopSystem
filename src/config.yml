@@ -1,5 +1,5 @@
 config:
-  ShopsPerUser: 1
+  ShopsPerUser: 10
   EnableOpShops: true
   UseUUID: false
   PlaceVillagerInMiddleOfBlock: true

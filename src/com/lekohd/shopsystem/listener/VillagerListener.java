@@ -41,7 +41,14 @@ public class VillagerListener implements Listener {
                 e.setCancelled(true);
 
                 Inventory inv = Bukkit.createInventory(null, 9, Locale.SHOP_MENU);
-                inv.setItem(0, ItemType.CREATESHOP.getItem());
+                if(ShopSystem.permHandler.hasRequiredPermissions(p))
+                {
+                    inv.setItem(0, ItemType.CREATESHOP.getItem());
+                }
+                else
+                {
+                    inv.setItem(0, ItemType.CANTCREATESHOP.getItem());
+                }
                 //inv.setItem(3, ItemType.CHANGENAME.getItem());
                 inv.setItem(8, ItemType.LEAVE.getItem());
                 p.openInventory(inv);
@@ -60,17 +67,19 @@ public class VillagerListener implements Listener {
                                     e.setCancelled(true);
                                     Inventory inv = Bukkit.createInventory(null, 9, Locale.SHOP_MENU);
                                     inv.setItem(0, ItemType.EDITSHOP.getItem());
+                                    inv.setItem(1, ItemType.DELETESHOP.getItem());
                                     if(p.hasPermission("shopsystem.shop.changeName"))
                                         inv.setItem(3, ItemType.CHANGENAME.getItem());
                                     inv.setItem(4, ItemType.SHOWSHOP.getItem());
                                     if(p.hasPermission("shopsystem.shop.changeProfession")) {
                                         if (v.getProfession() == Villager.Profession.FARMER)
-                                            VillagerClass.professionID = 0;
+                                            VillagerClass.professionByUUID.put(p.getUniqueId(), 0);
                                         if (v.getProfession() == Villager.Profession.LIBRARIAN)
-                                            VillagerClass.professionID = 1;
+                                            VillagerClass.professionByUUID.put(p.getUniqueId(), 1);
                                         if (v.getProfession() == Villager.Profession.PRIEST)
-                                            VillagerClass.professionID = 2;
-                                        inv.setItem(6, new ItemCreation(Locale.ITEM_CHANGE_PROFESSION, Material.WOOL, null, 1, VillagerClass.professionID).getItem());
+                                            VillagerClass.professionByUUID.put(p.getUniqueId(), 2);
+                                        inv.setItem(6, new ItemCreation(Locale.ITEM_CHANGE_PROFESSION, Material.WOOL, null, 1, VillagerClass.getProfession(p)).getItem());
+
                                     }
                                     inv.setItem(8, ItemType.LEAVE.getItem());
                                     p.openInventory(inv);
@@ -93,17 +102,18 @@ public class VillagerListener implements Listener {
                                 e.setCancelled(true);
                                 Inventory inv = Bukkit.createInventory(null, 9, Locale.SHOP_MENU);
                                 inv.setItem(0, ItemType.EDITSHOP.getItem());
+                                inv.setItem(1, ItemType.DELETESHOP.getItem());
                                 if(p.hasPermission("shopsystem.shop.changeName"))
                                     inv.setItem(3, ItemType.CHANGENAME.getItem());
                                 inv.setItem(4, ItemType.SHOWSHOP.getItem());
                                 if(p.hasPermission("shopsystem.shop.changeProfession")) {
                                     if (v.getProfession() == Villager.Profession.FARMER)
-                                        VillagerClass.professionID = 0;
+                                        VillagerClass.professionByUUID.put(p.getUniqueId(), 0);
                                     if (v.getProfession() == Villager.Profession.LIBRARIAN)
-                                        VillagerClass.professionID = 1;
+                                        VillagerClass.professionByUUID.put(p.getUniqueId(), 1);
                                     if (v.getProfession() == Villager.Profession.PRIEST)
-                                        VillagerClass.professionID = 2;
-                                    inv.setItem(6, new ItemCreation(Locale.ITEM_CHANGE_PROFESSION, Material.WOOL, null, 1, VillagerClass.professionID).getItem());
+                                        VillagerClass.professionByUUID.put(p.getUniqueId(), 2);
+                                    inv.setItem(6, new ItemCreation(Locale.ITEM_CHANGE_PROFESSION, Material.WOOL, null, 1, VillagerClass.getProfession(p)).getItem());
                                 }
                                 inv.setItem(8, ItemType.LEAVE.getItem());
                                 p.openInventory(inv);

@@ -17,6 +17,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 public enum ItemType
 {
     CREATESHOP(Locale.ITEM_CREATE, Material.ANVIL, null),
+    CANTCREATESHOP(Locale.ITEM_CANT_CREATE, Material.ANVIL, Locale.ITEM_CANT_CREATE_LORE),
+    DELETESHOP(Locale.ITEM_DELETE_SHOP, Material.FIREBALL, null),
     CHANGENAME(Locale.ITEM_CHANGE_SHOP_NAME, Material.PAPER, null),
     SHOWSHOP(Locale.ITEM_SHOW_SHOP, Material.ENDER_PEARL, null),
     EDITSHOP(Locale.ITEM_EDIT_SHOP, Material.ANVIL, null),

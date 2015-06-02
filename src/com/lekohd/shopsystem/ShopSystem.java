@@ -2,10 +2,9 @@ package com.lekohd.shopsystem;
 
 import com.lekohd.shopsystem.commands.Commands;
 import com.lekohd.shopsystem.compat.NMSManager;
+import com.lekohd.shopsystem.handler.PermissionHandler;
 import com.lekohd.shopsystem.item.ItemClass;
-import com.lekohd.shopsystem.listener.ChatListener;
-import com.lekohd.shopsystem.listener.InventoryListener;
-import com.lekohd.shopsystem.listener.VillagerListener;
+import com.lekohd.shopsystem.listener.*;
 import com.lekohd.shopsystem.manager.DataManager;
 import com.lekohd.shopsystem.manager.InventoryManager;
 import com.lekohd.shopsystem.manager.MessageManager;
@@ -43,6 +42,7 @@ public class ShopSystem extends JavaPlugin {
     public static SettingsManager settingsManager;
     public static DataManager dataManager;
     public static NMSManager nmsManager;
+    public static PermissionHandler permHandler;
     Logger logger = Bukkit.getLogger();
     ConsoleCommandSender clogger = this.getServer().getConsoleSender();
     public static HashMap<UUID, Location> playerInShop = new HashMap<UUID, Location>();
@@ -52,6 +52,8 @@ public class ShopSystem extends JavaPlugin {
     public static HashMap<UUID, Boolean> creatingInv = new HashMap<UUID, Boolean>();
     public static HashMap<UUID, Integer> currentSlot = new HashMap<UUID, Integer>();
     public static HashMap<UUID, Boolean> editName = new HashMap<UUID, Boolean>();
+    public static HashMap<UUID, Boolean> deleteShop = new HashMap<UUID, Boolean>();
+    public static HashMap<UUID, Boolean> isEditingShop = new HashMap<UUID, Boolean>();
 
     /**
      * Loading all shops and messages
@@ -66,6 +68,9 @@ public class ShopSystem extends JavaPlugin {
         pm.registerEvents(new InventoryListener(), this);
         pm.registerEvents(new VillagerListener(), this);
         pm.registerEvents(new ChatListener(), this);
+        pm.registerEvents(new JoinListener(), this);
+        pm.registerEvents(new LeaveList(), this);
+        pm.registerEvents(new DropItemListener(), this);
         this.getCommand("shop").setExecutor(new Commands());
         this.loadLocale();
         clogger.sendMessage(ChatColor.DARK_GRAY + "*******************************");
@@ -75,6 +80,8 @@ public class ShopSystem extends JavaPlugin {
         clogger.sendMessage(ChatColor.DARK_GRAY + "*******************************");
         dataManager = new DataManager();
         dataManager.loadAll();
+        dataManager.loadShopAmount();
+        permHandler = new PermissionHandler(settingsManager.getConfig().getInt("config.ShopsPerUser"));
     }
 
 
@@ -83,6 +90,7 @@ public class ShopSystem extends JavaPlugin {
      */
     public void onDisable(){
         dataManager.saveAll();
+        dataManager.saveAllShopAmounts();
     }
 
     /**

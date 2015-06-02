@@ -26,12 +26,23 @@ public class DataManager {
     public static HashMap<Location, UUID> shop = new HashMap<Location, UUID>();
     public static HashMap<UUID, InventoryManager> shopInventoryUUID = new HashMap<UUID, InventoryManager>();
     public static HashMap<UUID, UUID> shopOwnerUUID = new HashMap<UUID, UUID>(); //villager, player
+    public static HashMap<UUID, Integer> shopAmount = new HashMap<UUID, Integer>();
     public static int maxShops;
 
     public DataManager ()
     {
         data = ShopSystem.settingsManager.getData();
         maxShops = ShopSystem.settingsManager.getConfig().getInt("config.ShopsPerUser");
+    }
+
+    public static void loadShopAmount()
+    {
+        if(!data.isConfigurationSection("owner")) return;
+        for(String name : data.getConfigurationSection("owner").getKeys(false))
+        {
+            String uuid = name;
+            shopAmount.put(UUID.fromString(uuid), data.getInt("owner." + uuid));
+        }
     }
 
     public static void loadAll()
@@ -104,6 +115,33 @@ public class DataManager {
         }
         if(singleSave)
             ShopSystem.settingsManager.saveData();
+    }
+
+    public static void saveShopAmountByUUID(UUID owner, int amount, boolean singleSave)
+    {
+        data.set("owner." + owner.toString(), amount);
+        if(singleSave)
+            ShopSystem.settingsManager.saveData();
+    }
+
+    public static void saveAllShopAmounts()
+    {
+        for(UUID uuid : shopAmount.keySet())
+        {
+            saveShopAmountByUUID(uuid, shopAmount.get(uuid), false);
+        }
+        ShopSystem.settingsManager.saveData();
+    }
+
+    public static boolean userIsInConfig(UUID owner)
+    {
+        if(!data.isConfigurationSection("owner")) return false;
+        for(String name : data.getConfigurationSection("owner").getKeys(false)) {
+            String uuid = name;
+            if(uuid.equalsIgnoreCase(owner.toString()))
+                return true;
+        }
+        return false;
     }
 
     public static void saveAll()

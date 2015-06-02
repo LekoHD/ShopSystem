@@ -1,0 +1,10 @@
+name: ShopSystem
+version: 0.1
+authors: [Leon167, LekoHD]
+description: Official ShopSystem Plugin
+main: com.lekohd.shopsystem.ShopSystem
+
+commands:
+  shop:
+    aliases: [sh, sp]
+
