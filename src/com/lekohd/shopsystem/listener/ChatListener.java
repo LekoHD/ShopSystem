@@ -75,7 +75,7 @@ public class ChatListener implements Listener {
             if(ShopSystem.deleteShop.get(e.getPlayer().getUniqueId()))
             {
                 Player p = e.getPlayer();
-                if(e.getMessage().equalsIgnoreCase("y") || e.getMessage().equalsIgnoreCase("yes")) {
+                if(e.getMessage().equalsIgnoreCase("y") || e.getMessage().equalsIgnoreCase("yes")|| e.getMessage().equalsIgnoreCase("j") || e.getMessage().equalsIgnoreCase("ja")) {
                     Location loc = ShopSystem.playerInShop.get(p.getUniqueId());
                     if (ShopSystem.dataManager.shopInventory.containsKey(loc)) {
                         ShopSystem.dataManager.shopInventory.remove(loc);
