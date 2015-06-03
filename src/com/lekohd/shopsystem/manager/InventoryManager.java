@@ -56,7 +56,7 @@ public class InventoryManager {
                 continue;
             } else {
                 ItemClass item = items.get(i);
-                ItemCreation it = new ItemCreation(item.getItem().getItemMeta().getDisplayName(), item.getItem().getType(), item.getPrice() + "", item.getAmount(), -1);
+                ItemCreation it = new ItemCreation(null, item.getItem(), item.getPrice() + "", item.getAmount(), -1, true, null);
                 inv.setItem(item.getSlot(), it.getItem());
             }
         }
@@ -77,7 +77,7 @@ public class InventoryManager {
                 continue;
             } else {
                 ItemClass item = items.get(i);
-                ItemCreation it = new ItemCreation(item.getItem().getItemMeta().getDisplayName(), item.getItem().getType(), item.getPrice() + "", item.getAmount(), -1);
+                ItemCreation it = new ItemCreation(null, item.getItem(), item.getPrice() + "", item.getAmount(), -1, false, null);
                 inv.setItem(item.getSlot(), it.getItem());
             }
         }

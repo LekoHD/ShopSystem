@@ -2,6 +2,7 @@ package com.lekohd.shopsystem.listener;
 
 import com.lekohd.economysystem.EconomySystem;
 import com.lekohd.shopsystem.Locale;
+import com.lekohd.shopsystem.ShopGUI;
 import com.lekohd.shopsystem.ShopSystem;
 import com.lekohd.shopsystem.exception.ItemBuyException;
 import com.lekohd.shopsystem.exception.NotEnoughMoneyException;
@@ -10,11 +11,14 @@ import com.lekohd.shopsystem.item.ItemClass;
 import com.lekohd.shopsystem.item.ItemCreation;
 import com.lekohd.shopsystem.manager.InventoryManager;
 import com.lekohd.shopsystem.manager.MessageManager;
+import com.lekohd.shopsystem.manager.SettingsManager;
 import com.lekohd.shopsystem.util.ItemType;
 import com.lekohd.shopsystem.villager.VillagerClass;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
@@ -30,6 +34,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import sun.nio.cs.ext.SJIS;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -50,11 +55,17 @@ public class InventoryListener implements Listener {
             if(e.getClickedInventory() == null) return;
             if(e.getAction() == InventoryAction.PLACE_ALL || e.getAction() == InventoryAction.PLACE_SOME || e.getAction() == InventoryAction.PLACE_ONE)
             {
+                if(e.getClickedInventory().getTitle().equalsIgnoreCase(Locale.SHOP_NAME))
+                {
+                    e.setCancelled(true);
+                    return;
+                }
                 if(!e.getClickedInventory().getTitle().equalsIgnoreCase(Locale.SHOP_CREATE)) return;
                 ShopSystem.isEditingShop.put(((Player)e.getWhoClicked()).getUniqueId(), true);
                 InventoryManager invMa = ShopSystem.currentInvCreation.get(((Player) e.getWhoClicked()).getUniqueId());
                 ItemClass item = new ItemClass(e.getCursor(), e.getCursor().getAmount(), 0, e.getSlot());
-                ShopSystem.currentItem.put(((Player)e.getWhoClicked()).getUniqueId(), item);
+                item.getItem().setAmount(1);
+                ShopSystem.currentItem.put(((Player) e.getWhoClicked()).getUniqueId(), item);
                 invMa.addItem(item);
                 ShopSystem.currentInvCreation.put(((Player) e.getWhoClicked()).getUniqueId(), invMa);
                 ShopSystem.creatingInv.put(((Player) e.getWhoClicked()).getUniqueId(), true);
@@ -70,63 +81,122 @@ public class InventoryListener implements Listener {
             if(!e.getCurrentItem().hasItemMeta())
                 return;
             if(e.getClickedInventory().getTitle().equalsIgnoreCase(Locale.SHOP_CREATE)) {
-                if(e.isRightClick())
+                if(e.isLeftClick())
                 {
-                    InventoryManager invMa = ShopSystem.currentInvCreation.get(((Player) e.getWhoClicked()).getUniqueId());
-                    ItemClass item = new ItemClass(new ItemStack(Material.THIN_GLASS), -1, -1, e.getSlot());
-                    invMa.addItem(item);
-                    ShopSystem.currentInvCreation.put(((Player) e.getWhoClicked()).getUniqueId(), invMa);
-                    Inventory in = ((Player) e.getWhoClicked()).getInventory();
-                    in.addItem(new ItemStack(e.getCurrentItem().getType()));
-                    ((Player) e.getWhoClicked()).updateInventory();
-                    //System.out.println("Removed");
-                    ShopSystem.currentInvCreation.get(((Player) e.getWhoClicked()).getUniqueId()).openInv(((Player) e.getWhoClicked()));
-                    e.setCancelled(true);
+                    if(!e.getCurrentItem().hasItemMeta() || !e.getCurrentItem().getItemMeta().hasDisplayName() || !e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase(Locale.ITEM_SHOP_SAVE)) {
+                        if(e.getCursor() != null)
+                        {
+                            if(e.getCursor().getType() == e.getCurrentItem().getType() && e.getCursor().getData().getData() == e.getCurrentItem().getData().getData() && sameEnchantments(e.getCursor().getEnchantments(), e.getCurrentItem().getEnchantments()))
+                            {
+                                InventoryManager invMa = ShopSystem.currentInvCreation.get(((Player) e.getWhoClicked()).getUniqueId());
+                                ItemClass pItem = (ItemClass) invMa.getItems().get(e.getSlot());
+                                pItem.setAmount(pItem.getAmount() + e.getCursor().getAmount());
+                                invMa.addItem(pItem);
+                                ShopSystem.currentInvCreation.put(((Player) e.getWhoClicked()).getUniqueId(), invMa);
+                                //System.out.println("Removed");
+                                ShopSystem.isEditingShop.put(((Player)e.getWhoClicked()).getUniqueId(), true);
+                                ((Player) e.getWhoClicked()).closeInventory();
+                                ShopSystem.currentInvCreation.get(((Player) e.getWhoClicked()).getUniqueId()).openInv(((Player) e.getWhoClicked()));
+                                e.setCancelled(true);
+                                return;
+                            }
+                        }
+
+                        InventoryManager invMa = ShopSystem.currentInvCreation.get(((Player) e.getWhoClicked()).getUniqueId());
+                        ItemClass pItem = (ItemClass) invMa.getItems().get(e.getSlot());
+                        ItemClass item = new ItemClass(new ItemStack(Material.THIN_GLASS), -1, -1, e.getSlot());
+                        invMa.addItem(item);
+                        ShopSystem.currentInvCreation.put(((Player) e.getWhoClicked()).getUniqueId(), invMa);
+                        Inventory in = ((Player) e.getWhoClicked()).getInventory();
+                        ItemStack rItem = pItem.getItem();
+                        rItem.setAmount(pItem.getAmount());
+                        in.addItem(removeLore(rItem));
+                        ((Player) e.getWhoClicked()).updateInventory();
+                        //System.out.println("Removed");
+                        ShopSystem.currentInvCreation.get(((Player) e.getWhoClicked()).getUniqueId()).openInv(((Player) e.getWhoClicked()));
+                        e.setCancelled(true);
+                    }
                 } else
+                if (e.isRightClick())
+                {
+                    if(!e.getCurrentItem().hasItemMeta() || !e.getCurrentItem().getItemMeta().hasDisplayName() || !e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase(Locale.ITEM_SHOP_SAVE)) {
+                        if(e.getCursor() != null)
+                        {
+                            if(e.getCursor().getType() == e.getCurrentItem().getType() && e.getCursor().getData().getData() == e.getCurrentItem().getData().getData() && sameEnchantments(e.getCursor().getEnchantments(), e.getCurrentItem().getEnchantments()))
+                            {
+                                InventoryManager invMa = ShopSystem.currentInvCreation.get(((Player) e.getWhoClicked()).getUniqueId());
+                                ItemClass pItem = (ItemClass) invMa.getItems().get(e.getSlot());
+                                pItem.setAmount(pItem.getAmount() + e.getCursor().getAmount());
+                                invMa.addItem(pItem);
+                                ShopSystem.currentInvCreation.put(((Player) e.getWhoClicked()).getUniqueId(), invMa);
+                                //System.out.println("Removed");
+                                ShopSystem.isEditingShop.put(((Player)e.getWhoClicked()).getUniqueId(), true);
+                                ((Player) e.getWhoClicked()).closeInventory();
+                                ShopSystem.currentInvCreation.get(((Player) e.getWhoClicked()).getUniqueId()).openInv(((Player) e.getWhoClicked()));
+                                e.setCancelled(true);
+                                return;
+                            }
+                        }
+                        ShopSystem.isEditingShop.put(((Player) e.getWhoClicked()).getUniqueId(), true);
+                        InventoryManager invMa = ShopSystem.currentInvCreation.get(((Player) e.getWhoClicked()).getUniqueId());
+                        ItemClass item = (ItemClass) invMa.getItems().get(e.getSlot());
+                        ShopSystem.currentItem.put(((Player) e.getWhoClicked()).getUniqueId(), item);
+                        invMa.addItem(item);
+                        ShopSystem.currentInvCreation.put(((Player) e.getWhoClicked()).getUniqueId(), invMa);
+                        ShopSystem.creatingInv.put(((Player) e.getWhoClicked()).getUniqueId(), true);
+                        ShopSystem.currentSlot.put(((Player) e.getWhoClicked()).getUniqueId(), e.getSlot());
+                        MessageManager.getInstance().msg((Player) e.getWhoClicked(), MessageManager.MessageType.INFO, Locale.ENTER_PRICE);
+                        e.setCurrentItem(new ItemStack(Material.AIR));
+                        e.setCancelled(true);
+                        ((Player) e.getWhoClicked()).closeInventory();
+                        return;
+                    }
+                }else
                     e.setCancelled(true);
             }
             if (e.getClickedInventory().getTitle().equalsIgnoreCase(Locale.SHOP_NAME))
             {
                 Player p = (Player) e.getWhoClicked();
-
-                if(ShopSystem.settingsManager.getConfig().getBoolean("config.UseUUID")) {
+                if(e.isRightClick()) {
                     try {
+                        UUID owner = ShopSystem.dataManager.shopOwner.get(ShopSystem.playerInShop.get(p.getUniqueId()));
                         InventoryManager invMa;
-                        if (ShopSystem.dataManager.shopInventoryUUID.containsKey(ShopSystem.playerInShopUUID.get(p.getUniqueId()))) {
-                            invMa = this.buyItem(ShopSystem.dataManager.shopInventoryUUID.get(ShopSystem.playerInShopUUID.get(p.getUniqueId())), e.getSlot(),p,Bukkit.getPlayer(ShopSystem.dataManager.shopOwnerUUID.get(ShopSystem.playerInShopUUID.get(p.getUniqueId()))));
-                        } else {
-                            invMa = this.buyItem(ShopSystem.dataManager.shopInventory.get(ShopSystem.playerInShop.get(p.getUniqueId())), e.getSlot(),p,Bukkit.getPlayer(ShopSystem.dataManager.shopOwner.get(ShopSystem.playerInShop.get(p.getUniqueId()))));
-                        }
+                        if (isOnline(owner)) {
+                            invMa = this.buyItem(ShopSystem.dataManager.shopInventory.get(ShopSystem.playerInShop.get(p.getUniqueId())), e.getSlot(), p, Bukkit.getPlayer(owner), false);
+                        } else
+                            invMa = this.buyItem(ShopSystem.dataManager.shopInventory.get(ShopSystem.playerInShop.get(p.getUniqueId())), e.getSlot(), p, owner, false);
                         ShopSystem.dataManager.shopInventory.put(ShopSystem.playerInShop.get(p.getUniqueId()), invMa);
                         ItemStack itemStack = e.getCurrentItem().clone();
                         itemStack.setAmount(1);
                         p.getInventory().addItem(removeLore(itemStack));
                     } catch (ItemBuyException exeption) {
                         exeption.printStackTrace();
-                    }catch (NotEnoughMoneyException exception)
-                    {
+                    } catch (NotEnoughMoneyException exception) {
 
                     }
-
-                    ShopSystem.dataManager.shopInventory.get(ShopSystem.playerInShop.get(p.getUniqueId())).openUserInv(p);
-                }
-                else
+                }else if(e.isLeftClick())
                 {
                     try {
-                        InventoryManager invMa = this.buyItem(ShopSystem.dataManager.shopInventory.get(ShopSystem.playerInShop.get(p.getUniqueId())), e.getSlot(), p, Bukkit.getPlayer(ShopSystem.dataManager.shopOwner.get(ShopSystem.playerInShop.get(p.getUniqueId()))));
+                        UUID owner = ShopSystem.dataManager.shopOwner.get(ShopSystem.playerInShop.get(p.getUniqueId()));
+                        InventoryManager invMa = ShopSystem.dataManager.shopInventory.get(ShopSystem.playerInShop.get(p.getUniqueId()));
+                        ItemClass item = (ItemClass) invMa.getItems().get(e.getSlot());
+                        invMa = null;
+                        if (isOnline(owner)) {
+                            invMa = this.buyItem(ShopSystem.dataManager.shopInventory.get(ShopSystem.playerInShop.get(p.getUniqueId())), e.getSlot(), p, Bukkit.getPlayer(owner), true);
+                        } else
+                            invMa = this.buyItem(ShopSystem.dataManager.shopInventory.get(ShopSystem.playerInShop.get(p.getUniqueId())), e.getSlot(), p, owner, true);
                         ShopSystem.dataManager.shopInventory.put(ShopSystem.playerInShop.get(p.getUniqueId()), invMa);
-                        ItemStack itemStack = e.getCurrentItem().clone();
-                        itemStack.setAmount(1);
+                        ItemStack itemStack = item.getItem();
+                        itemStack.setAmount(item.getAmount());
                         p.getInventory().addItem(removeLore(itemStack));
                     } catch (ItemBuyException exeption) {
                         exeption.printStackTrace();
-                    } catch (NotEnoughMoneyException exception)
-                    {
+                    } catch (NotEnoughMoneyException exception) {
 
                     }
+                }
 
                     ShopSystem.dataManager.shopInventory.get(ShopSystem.playerInShop.get(p.getUniqueId())).openUserInv(p);
-                }
                 e.setCancelled(true);
             }
             if(!e.getCurrentItem().getItemMeta().hasDisplayName())
@@ -163,22 +233,10 @@ public class InventoryListener implements Listener {
                 }
                 if (e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase(ItemType.EDITSHOP.getName())) {
                     Player p = (Player) e.getWhoClicked();
-                    if(ShopSystem.settingsManager.getConfig().getBoolean("config.UseUUID")) {
-                        if (ShopSystem.dataManager.shopInventoryUUID.containsKey(ShopSystem.playerInShopUUID.get(p.getUniqueId()))) {
-                            ShopSystem.dataManager.shopInventoryUUID.get(ShopSystem.playerInShopUUID.get(p.getUniqueId())).openInv(p);
-                            ShopSystem.currentInvCreation.put(p.getUniqueId(), ShopSystem.dataManager.shopInventoryUUID.get(ShopSystem.playerInShopUUID.get(p.getUniqueId())));
-                        } else {
-                            if (ShopSystem.dataManager.shopInventory.containsKey(ShopSystem.playerInShop.get(p.getUniqueId()))) {
-                                ShopSystem.dataManager.shopInventory.get(ShopSystem.playerInShop.get(p.getUniqueId())).openInv(p);
-                                ShopSystem.currentInvCreation.put(p.getUniqueId(), ShopSystem.dataManager.shopInventory.get(ShopSystem.playerInShop.get(p.getUniqueId())));
-                            }
-                        }
-                    } else {
                         if (ShopSystem.dataManager.shopInventory.containsKey(ShopSystem.playerInShop.get(p.getUniqueId()))) {
                             ShopSystem.dataManager.shopInventory.get(ShopSystem.playerInShop.get(p.getUniqueId())).openInv(p);
                             ShopSystem.currentInvCreation.put(p.getUniqueId(), ShopSystem.dataManager.shopInventory.get(ShopSystem.playerInShop.get(p.getUniqueId())));
                         }
-                    }
                     e.setCancelled(true);
                 }
                 if (e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase(ItemType.SHOWSHOP.getName())) {
@@ -206,27 +264,8 @@ public class InventoryListener implements Listener {
                 }
                 if(e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase(ItemType.CHANGEPROFESSION.getName()))
                 {
-                    for (Entity entity : ShopSystem.playerInShop.get(((Player) e.getWhoClicked()).getUniqueId()).getChunk().getEntities()) {
-                        Location loc = entity.getLocation();
-                        Location vLoc = ShopSystem.playerInShop.get(((Player) e.getWhoClicked()).getUniqueId());
-                        if (vLoc.getBlockX() == loc.getBlockX() && vLoc.getBlockY() == loc.getBlockY() && vLoc.getBlockZ() == loc.getBlockZ() && vLoc.getWorld() == loc.getWorld()) {
-                            if (entity instanceof Villager) {
-                                Villager v = (Villager) entity;
-                                VillagerClass.switchProfession(v ,((Player)e.getWhoClicked()));
-                                Inventory inv = Bukkit.createInventory(null, 9, Locale.SHOP_MENU);
-                                inv.setItem(0, ItemType.EDITSHOP.getItem());
-                                inv.setItem(1, ItemType.DELETESHOP.getItem());
-                                if(((Player)e.getWhoClicked()).hasPermission("shopsystem.shop.changeName"))
-                                    inv.setItem(3, ItemType.CHANGENAME.getItem());
-                                inv.setItem(4, ItemType.SHOWSHOP.getItem());
-                                inv.setItem(6, new ItemCreation(Locale.ITEM_CHANGE_PROFESSION, Material.WOOL, null, 1, VillagerClass.getProfession((Player) e.getWhoClicked())).getItem());
-                                inv.setItem(8, ItemType.LEAVE.getItem());
-                                ((Player)e.getWhoClicked()).closeInventory();
-                                ((Player)e.getWhoClicked()).openInventory(inv);
-                            }
-                        }
-                    }
-                   e.setCancelled(true);
+                    ShopGUI.changeProfession((Player)e.getWhoClicked());
+                    e.setCancelled(true);
                 }
             }
 
@@ -304,41 +343,100 @@ public class InventoryListener implements Listener {
                             }
                         }
                     }
+                    e.setCancelled(true);
                 }
-            } else
-            {
-
-
-
             }
         }
     }
 
-    public InventoryManager buyItem(InventoryManager inventoryManager, int slot, Player buyer, Player seller) throws ItemBuyException, NotEnoughMoneyException
+    public InventoryManager buyItem(InventoryManager inventoryManager, int slot, Player buyer, Player seller, boolean buyAll) throws ItemBuyException, NotEnoughMoneyException
     {
         ArrayList<ItemClass> items = inventoryManager.getItems();
         ItemClass item = items.get(slot);
+        boolean requiredAmount = EconomyHandler.hasRequiredAmount(buyer, item.getPrice());
+        if(item.getAmount() == -1)
+        {
+            return inventoryManager;
+        }
         try {
-            EconomyHandler.transferMoney(buyer, seller, item.getPrice());
+            if(buyAll)
+            {
+                EconomyHandler.transferMoney(buyer, seller, item.getPrice() * item.getAmount());
+            } else
+                EconomyHandler.transferMoney(buyer, seller, item.getPrice());
         } catch (NotEnoughMoneyException ex)
         {
             throw new NotEnoughMoneyException();
         }
+        if(buyAll)
+        {
+            if((requiredAmount && ((!seller.isOp() || !seller.hasPermission("shopsystem.admin"))) || !ShopSystem.settingsManager.getConfig().getBoolean("config.EnableOpShops")))
+                inventoryManager.addItem(new ItemClass(new ItemStack(Material.THIN_GLASS), -1, -1, slot));
+            return inventoryManager;
+        }
         if(item.getAmount() == 1)
         {
-            if(EconomyHandler.hasRequiredAmount(buyer, item.getPrice()))
+            if((requiredAmount && ((!seller.isOp() || !seller.hasPermission("shopsystem.admin"))) || !ShopSystem.settingsManager.getConfig().getBoolean("config.EnableOpShops")))
                 inventoryManager.addItem(new ItemClass(new ItemStack(Material.THIN_GLASS), -1, -1, slot));
         }
         else
         {
             if(item.getAmount()>1)
             {
-                if(EconomyHandler.hasRequiredAmount(buyer, item.getPrice())) {
+                if((requiredAmount && ((!seller.isOp() || !seller.hasPermission("shopsystem.admin"))) || !ShopSystem.settingsManager.getConfig().getBoolean("config.EnableOpShops"))) {
                     item.setAmount(item.getAmount() - 1);
                     inventoryManager.addItem(item);
                 }
             }
             else
+                throw new ItemBuyException("Invalid item amount");
+        }
+
+
+        return inventoryManager;
+    }
+
+    public InventoryManager buyItem(InventoryManager inventoryManager, int slot, Player buyer, UUID seller, boolean buyAll) throws ItemBuyException, NotEnoughMoneyException
+    {
+        ArrayList<ItemClass> items = inventoryManager.getItems();
+        ItemClass item = items.get(slot);
+        boolean requiredAmount = EconomyHandler.hasRequiredAmount(buyer, item.getPrice());
+        if(item.getAmount() == -1)
+        {
+            return inventoryManager;
+        }
+        try {
+            if(buyAll)
+            {
+                EconomyHandler.transferMoney(buyer, seller, item.getPrice() * item.getAmount());
+            } else
+                EconomyHandler.transferMoney(buyer, seller, item.getPrice());
+        } catch (NotEnoughMoneyException ex)
+        {
+            throw new NotEnoughMoneyException();
+        }
+        OfflinePlayer p = Bukkit.getOfflinePlayer(seller);
+        if(buyAll)
+        {
+            if((requiredAmount && ((!p.isOp())) || !ShopSystem.settingsManager.getConfig().getBoolean("config.EnableOpShops")))
+                inventoryManager.addItem(new ItemClass(new ItemStack(Material.THIN_GLASS), -1, -1, slot));
+            return inventoryManager;
+        }
+        if(item.getAmount() == 1)
+        {
+            if((requiredAmount && ((!p.isOp())) || !ShopSystem.settingsManager.getConfig().getBoolean("config.EnableOpShops")))
+                inventoryManager.addItem(new ItemClass(new ItemStack(Material.THIN_GLASS), -1, -1, slot));
+        }
+        else
+        {
+            if(item.getAmount()>1)
+            {
+                if((requiredAmount && ((!p.isOp())) || !ShopSystem.settingsManager.getConfig().getBoolean("config.EnableOpShops"))) {
+                    item.setAmount(item.getAmount() - 1);
+                    inventoryManager.addItem(item);
+                }
+            }
+            else if(item.getAmount() < -1)
                 throw new ItemBuyException("Invalid item amount");
         }
 
@@ -358,6 +456,33 @@ public class InventoryListener implements Listener {
             item.setItemMeta(meta);
         }
         return item;
+    }
+
+    public boolean isOnline(UUID uuid)
+    {
+        for(Player p : Bukkit.getOnlinePlayers())
+        {
+            if(p.getUniqueId().toString().equalsIgnoreCase(uuid.toString()))
+                return true;
+        }
+        return false;
+    }
+
+    public boolean sameEnchantments(Map<Enchantment, Integer> one, Map<Enchantment, Integer> two)
+    {
+        if(one.isEmpty() && two.isEmpty())
+            return true;
+        for(Enchantment enchantment : one.keySet())
+        {
+            if(two.containsKey(enchantment))
+            {
+                if(two.get(enchantment) != one.get(enchantment))
+                {
+                    return false;
+                }
+            } else return false;
+        }
+        return true;
     }
 
 }

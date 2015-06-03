@@ -3,3 +3,4 @@ config:
   EnableOpShops: true
   UseUUID: false
   PlaceVillagerInMiddleOfBlock: true
+  NoMoneyForOps: true

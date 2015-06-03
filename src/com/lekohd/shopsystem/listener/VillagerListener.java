@@ -1,6 +1,7 @@
 package com.lekohd.shopsystem.listener;
 
 import com.lekohd.shopsystem.Locale;
+import com.lekohd.shopsystem.ShopGUI;
 import com.lekohd.shopsystem.ShopSystem;
 import com.lekohd.shopsystem.item.ItemCreation;
 import com.lekohd.shopsystem.util.ItemType;
@@ -43,88 +44,20 @@ public class VillagerListener implements Listener {
             if(v.getCustomName().equalsIgnoreCase(Locale.SHOP_GET_IT))
             {
                 e.setCancelled(true);
-
-                Inventory inv = Bukkit.createInventory(null, 9, Locale.SHOP_MENU);
-                if(ShopSystem.permHandler.hasRequiredPermissions(p))
-                {
-                    inv.setItem(0, ItemType.CREATESHOP.getItem());
-                }
-                else
-                {
-                    inv.setItem(0, ItemType.CANTCREATESHOP.getItem());
-                }
-                //inv.setItem(3, ItemType.CHANGENAME.getItem());
-                inv.setItem(8, ItemType.LEAVE.getItem());
-                p.openInventory(inv);
-
+                ShopGUI.setGetItMenu(p);
             }
             else
             {
                 Location vLoc = v.getLocation();
                 Location loc = new Location(vLoc.getWorld(), vLoc.getBlockX(), vLoc.getBlockY(), vLoc.getBlockZ());
-                //System.out.println(loc);
-                if(ShopSystem.settingsManager.getConfig().getBoolean("config.UseUUID")) {
-                    for (Entity entity : ShopSystem.playerInShop.get(p.getUniqueId()).getWorld().getEntities()) {
-                        if (ShopSystem.dataManager.shopInventoryUUID.containsKey(entity.getUniqueId())) {
-                            if (ShopSystem.dataManager.shopOwnerUUID.containsKey(entity.getUniqueId())) {
-                                if (p.getUniqueId().toString().equalsIgnoreCase(ShopSystem.dataManager.shopOwnerUUID.get(entity.getUniqueId()).toString())) {
-                                    e.setCancelled(true);
-                                    Inventory inv = Bukkit.createInventory(null, 9, Locale.SHOP_MENU);
-                                    inv.setItem(0, ItemType.EDITSHOP.getItem());
-                                    inv.setItem(1, ItemType.DELETESHOP.getItem());
-                                    if(p.hasPermission("shopsystem.shop.changeName"))
-                                        inv.setItem(3, ItemType.CHANGENAME.getItem());
-                                    inv.setItem(4, ItemType.SHOWSHOP.getItem());
-                                    if(p.hasPermission("shopsystem.shop.changeProfession")) {
-                                        if (v.getProfession() == Villager.Profession.FARMER)
-                                            VillagerClass.professionByUUID.put(p.getUniqueId(), 0);
-                                        if (v.getProfession() == Villager.Profession.LIBRARIAN)
-                                            VillagerClass.professionByUUID.put(p.getUniqueId(), 1);
-                                        if (v.getProfession() == Villager.Profession.PRIEST)
-                                            VillagerClass.professionByUUID.put(p.getUniqueId(), 2);
-                                        inv.setItem(6, new ItemCreation(Locale.ITEM_CHANGE_PROFESSION, Material.WOOL, null, 1, VillagerClass.getProfession(p)).getItem());
-
-                                    }
-                                    inv.setItem(8, ItemType.LEAVE.getItem());
-                                    p.openInventory(inv);
-                                } else {
-                                    e.setCancelled(true);
-                                    ShopSystem.dataManager.shopInventoryUUID.get(entity.getUniqueId()).openUserInv(p);
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    if (ShopSystem.dataManager.shopInventory.containsKey(loc)) {
-                        //System.out.println("Same Loc");
-                        if (ShopSystem.dataManager.shopOwner.containsKey(loc)) {
-                            //System.out.println("Same Loc");
-                            //System.out.println(p.getUniqueId());
-                            //System.out.println(ShopSystem.dataManager.shopOwner.get(loc));
-                            if (p.getUniqueId().toString().equalsIgnoreCase(ShopSystem.dataManager.shopOwner.get(loc).toString())) {
-                                //System.out.println("Same UUID");
-                                e.setCancelled(true);
-                                Inventory inv = Bukkit.createInventory(null, 9, Locale.SHOP_MENU);
-                                inv.setItem(0, ItemType.EDITSHOP.getItem());
-                                inv.setItem(1, ItemType.DELETESHOP.getItem());
-                                if(p.hasPermission("shopsystem.shop.changeName"))
-                                    inv.setItem(3, ItemType.CHANGENAME.getItem());
-                                inv.setItem(4, ItemType.SHOWSHOP.getItem());
-                                if(p.hasPermission("shopsystem.shop.changeProfession")) {
-                                    if (v.getProfession() == Villager.Profession.FARMER)
-                                        VillagerClass.professionByUUID.put(p.getUniqueId(), 0);
-                                    if (v.getProfession() == Villager.Profession.LIBRARIAN)
-                                        VillagerClass.professionByUUID.put(p.getUniqueId(), 1);
-                                    if (v.getProfession() == Villager.Profession.PRIEST)
-                                        VillagerClass.professionByUUID.put(p.getUniqueId(), 2);
-                                    inv.setItem(6, new ItemCreation(Locale.ITEM_CHANGE_PROFESSION, Material.WOOL, null, 1, VillagerClass.getProfession(p)).getItem());
-                                }
-                                inv.setItem(8, ItemType.LEAVE.getItem());
-                                p.openInventory(inv);
-                            } else {
-                                e.setCancelled(true);
-                                ShopSystem.dataManager.shopInventory.get(loc).openUserInv(p);
-                            }
+                if (ShopSystem.dataManager.shopInventory.containsKey(loc)) {
+                    if (ShopSystem.dataManager.shopOwner.containsKey(loc)) {
+                        if (p.getUniqueId().toString().equalsIgnoreCase(ShopSystem.dataManager.shopOwner.get(loc).toString())) {
+                            e.setCancelled(true);
+                            ShopGUI.setAdminMenu(p, v);
+                        }else {
+                            e.setCancelled(true);
+                            ShopSystem.dataManager.shopInventory.get(loc).openUserInv(p);
                         }
                     }
                 }
@@ -161,24 +94,5 @@ public class VillagerListener implements Listener {
             }
         }
     }
-
-    /*private static final UUID movementSpeedUID = UUID.fromString("206a89dc-ae78-4c4d-b42c-3b31db3f5a7c");
-
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onEntitySpawn(CreatureSpawnEvent event){
-        LivingEntity entity = event.getEntity();
-
-        if (entity.getType() == EntityType.VILLAGER){
-            Villager v = (Villager)entity;
-            //if(v.getCustomName().equalsIgnoreCase(""))
-            EntityInsentient nmsEntity = (EntityInsentient) ((CraftLivingEntity) entity).getHandle();
-            AttributeInstance attributes = nmsEntity.getAttributeInstance(GenericAttributes.d);
-
-            AttributeModifier modifier = new AttributeModifier(movementSpeedUID, "<plugin_name> movement speed multiplier", 0d, 0);
-
-            attributes.b(modifier);
-            attributes.a(modifier);
-        }
-    }*/
 
 }

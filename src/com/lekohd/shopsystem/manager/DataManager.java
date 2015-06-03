@@ -6,11 +6,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by Leon on 30.05.2015.
@@ -67,17 +66,28 @@ public class DataManager {
                         shop.put(loc, UUID.fromString(uuid));
                         shopOwnerUUID.put(UUID.fromString(uuid),UUID.fromString(data.getString(path + ".owner")));
                         InventoryManager inventoryManager = new InventoryManager(45);
-                        for(String slot : data.getConfigurationSection(path + ".item").getKeys(false))
-                        {
-                            String p = path;
-                            p = p + ".item." + slot;
-                            Material material = Material.valueOf(data.getString(p + ".material"));
-                            int amount = data.getInt(p + ".amount");
-
-                            int sl = Integer.parseInt(slot);
-                            int price = data.getInt(p + ".price");
-                            ItemClass item = new ItemClass(new ItemStack(material),amount,price,sl);
-                            inventoryManager.addItem(item);
+                        if(data.isConfigurationSection(path + ".item")) {
+                            for (String slot : data.getConfigurationSection(path + ".item").getKeys(false)) {
+                                String p = path;
+                                p = p + ".item." + slot;
+                                Material material = Material.valueOf(data.getString(p + ".material"));
+                                int amount = data.getInt(p + ".amount");
+                                int sl = Integer.parseInt(slot);
+                                int price = data.getInt(p + ".price");
+                                byte type = 0;
+                                type = (byte)data.getInt(p + ".type");
+                                ArrayList<String> ens = (ArrayList)data.getList(p + ".enchantment");
+                                HashMap<Enchantment, Integer> enchantmentIntegerMap = new HashMap<Enchantment, Integer>();
+                                for(String s : ens)
+                                {
+                                    String[] ss = s.split(":");
+                                    enchantmentIntegerMap.put(Enchantment.getByName(ss[0]), Integer.parseInt(ss[1]));
+                                }
+                                ItemStack pItem = new ItemStack(material, 1, type);
+                                pItem.addEnchantments(enchantmentIntegerMap);
+                                ItemClass item = new ItemClass(pItem, amount, price, sl);
+                                inventoryManager.addItem(item);
+                            }
                         }
                         shopInventory.put(loc, inventoryManager);
                         shopInventoryUUID.put(UUID.fromString(uuid), inventoryManager);
@@ -111,6 +121,17 @@ public class DataManager {
                 data.set(path + ".item." + item.getSlot() + ".amount", item.getAmount());
                 data.set(path + ".item." + item.getSlot() + ".slot", item.getSlot());
                 data.set(path + ".item." + item.getSlot() + ".price", item.getPrice());
+                data.set(path + ".item." + item.getSlot() + ".type", item.getItem().getData().getData());
+                ArrayList<String> ens = new ArrayList<String>();
+                if(item.getItem().getItemMeta().hasEnchants()) {
+                    for (Enchantment enchantment : item.getItem().getEnchantments().keySet()) {
+                        String s = enchantment.getName();
+                        s = s + ":";
+                        s = s + item.getItem().getEnchantments().get(enchantment);
+                        ens.add(s);
+                    }
+                }
+                data.set(path + ".item." + item.getSlot() + ".enchantment", ens);
             }
         }
         if(singleSave)

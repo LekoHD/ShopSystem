@@ -37,10 +37,15 @@ public class Locale {
     public static String ENTER_DELETE_SHOP_FAILED = "Aborted shop deletion";
     public static String ITEM_SHOW_SHOP = "Open your Shop";
     public static String ITEM_EDIT_SHOP = "Edit your Shop";
-    public static String ITEM_PRICE = "Coins: %PRICE%";
+    public static String ITEM_PRICE = "§eCoins: §3%PRICE%";
     public static String ITEM_CHANGE_PROFESSION = "Change Villager Color";
     public static String ECONOMY_DONT_HAVE_ENOUGH_MONEY = "§4You don't have enough money to buy this item!";
     public static String ECONOMY_BUYING_SUCCESS = "You just bought an item for %PRICE% coins.";
     public static String ECONOMY_SOLD_ITEM = "You just sold an item for %PRICE% to %BUYER%";
+    public static String ITEM_AMOUNT = "§eIn Stock: §3%AMOUNT%";
+    public static String ITEM_BUY_RIGHT_CLICK = "§8Right Click to buy 1";
+    public static String ITEM_BUY_LEFT_CLICK = "§8Left Click to buy all";
+    public static String ITEM_EDIT_RIGHT_CLICK = "§8Right Click to edit price";
+    public static String ITEM_EDIT_LEFT_CLICK = "§8Left Click to remove item";
 
 }

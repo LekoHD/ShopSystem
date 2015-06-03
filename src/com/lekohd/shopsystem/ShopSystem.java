@@ -41,7 +41,8 @@ import java.util.logging.Logger;
  *   - shopsystem.shop.create.<amount> amount =< config.ShopsPerUser
  */
 
-public class ShopSystem extends JavaPlugin {
+public class ShopSystem extends JavaPlugin {  //Empty Inventory Bug, Red Dot for idiots
+
 
     public static ShopSystem instance;
     public static SettingsManager settingsManager;
