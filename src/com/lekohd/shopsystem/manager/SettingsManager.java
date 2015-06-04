@@ -105,7 +105,7 @@ public class SettingsManager {
     /**
      * To get the config file
      * @return the config file, Used in:
-     *      @see com.lekohd.shopsystem.villager.VillagerClass
+     *      @see com.lekohd.shopsystem.entity.VillagerClass
      *      @see com.lekohd.shopsystem.listener.InventoryListener
      *      @see com.lekohd.shopsystem.listener.VillagerListener
      */

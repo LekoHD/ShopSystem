@@ -1,5 +1,6 @@
 package com.lekohd.shopsystem.manager;
 
+import com.lekohd.shopsystem.ShopData;
 import com.lekohd.shopsystem.ShopSystem;
 import com.lekohd.shopsystem.item.ItemClass;
 import org.bukkit.Bukkit;
@@ -46,6 +47,7 @@ public class DataManager {
 
     public static void loadAll()
     {
+
         if(!data.isConfigurationSection("Locations")) return;
         for (String name : data.getConfigurationSection("Locations").getKeys(false)) {
             //String content = locale.getString("Messages." + name).replace("&", "§");
@@ -89,6 +91,7 @@ public class DataManager {
                                 inventoryManager.addItem(item);
                             }
                         }
+                        ShopSystem.shopDatas.add(new ShopData(loc, UUID.fromString(data.getString(path + ".owner")), inventoryManager));
                         shopInventory.put(loc, inventoryManager);
                         shopInventoryUUID.put(UUID.fromString(uuid), inventoryManager);
 

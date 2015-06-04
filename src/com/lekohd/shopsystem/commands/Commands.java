@@ -3,7 +3,7 @@ package com.lekohd.shopsystem.commands;
 import com.lekohd.shopsystem.Locale;
 import com.lekohd.shopsystem.ShopSystem;
 import com.lekohd.shopsystem.manager.MessageManager;
-import com.lekohd.shopsystem.villager.VillagerClass;
+import com.lekohd.shopsystem.entity.VillagerClass;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

@@ -3,24 +3,13 @@ package com.lekohd.shopsystem.listener;
 import com.lekohd.shopsystem.Locale;
 import com.lekohd.shopsystem.ShopGUI;
 import com.lekohd.shopsystem.ShopSystem;
-import com.lekohd.shopsystem.item.ItemCreation;
-import com.lekohd.shopsystem.util.ItemType;
-import com.lekohd.shopsystem.villager.VillagerClass;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.*;
-import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.inventory.Inventory;
-
-import java.util.UUID;
 
 /**
  * Created by Leon on 30.05.2015.

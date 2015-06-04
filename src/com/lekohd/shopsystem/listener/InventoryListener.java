@@ -1,6 +1,5 @@
 package com.lekohd.shopsystem.listener;
 
-import com.lekohd.economysystem.EconomySystem;
 import com.lekohd.shopsystem.Locale;
 import com.lekohd.shopsystem.ShopGUI;
 import com.lekohd.shopsystem.ShopSystem;
@@ -8,12 +7,9 @@ import com.lekohd.shopsystem.exception.ItemBuyException;
 import com.lekohd.shopsystem.exception.NotEnoughMoneyException;
 import com.lekohd.shopsystem.handler.EconomyHandler;
 import com.lekohd.shopsystem.item.ItemClass;
-import com.lekohd.shopsystem.item.ItemCreation;
 import com.lekohd.shopsystem.manager.InventoryManager;
 import com.lekohd.shopsystem.manager.MessageManager;
-import com.lekohd.shopsystem.manager.SettingsManager;
 import com.lekohd.shopsystem.util.ItemType;
-import com.lekohd.shopsystem.villager.VillagerClass;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -24,14 +20,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import sun.nio.cs.ext.SJIS;
 
 import java.util.ArrayList;
 import java.util.Map;

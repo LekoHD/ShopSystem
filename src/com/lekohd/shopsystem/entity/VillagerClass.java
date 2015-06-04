@@ -1,4 +1,4 @@
-package com.lekohd.shopsystem.villager;
+package com.lekohd.shopsystem.entity;
 
 import com.lekohd.shopsystem.Locale;
 import com.lekohd.shopsystem.ShopSystem;

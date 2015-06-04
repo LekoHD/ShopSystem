@@ -1,5 +1,6 @@
 package com.lekohd.shopsystem;
 
+import com.google.gson.Gson;
 import com.lekohd.shopsystem.commands.Commands;
 import com.lekohd.shopsystem.compat.NMSManager;
 import com.lekohd.shopsystem.handler.PermissionHandler;
@@ -18,9 +19,9 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -60,6 +61,8 @@ public class ShopSystem extends JavaPlugin {  //Empty Inventory Bug, Red Dot for
     public static HashMap<UUID, Boolean> editName = new HashMap<UUID, Boolean>();
     public static HashMap<UUID, Boolean> deleteShop = new HashMap<UUID, Boolean>();
     public static HashMap<UUID, Boolean> isEditingShop = new HashMap<UUID, Boolean>();
+    public static ArrayList<ShopData> shopDatas = new ArrayList<ShopData>();
+    public Gson gson;
 
     /**
      * Loading all shops and messages
@@ -88,6 +91,19 @@ public class ShopSystem extends JavaPlugin {  //Empty Inventory Bug, Red Dot for
         dataManager.loadAll();
         dataManager.loadShopAmount();
         permHandler = new PermissionHandler(settingsManager.getConfig().getInt("config.ShopsPerUser"));
+        this.gson = new Gson();
+        /*if(!getFile().exists())
+        {
+            try {
+                getFile().createNewFile();
+            } catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        } else
+        {
+
+        }*/
     }
 
 
@@ -97,6 +113,47 @@ public class ShopSystem extends JavaPlugin {  //Empty Inventory Bug, Red Dot for
     public void onDisable(){
         dataManager.saveAll();
         dataManager.saveAllShopAmounts();
+    }
+
+    protected File getFile()
+    {
+        return new File(getDataFolder(), "data.json");
+    }
+
+    public void saveData()
+    {
+        ShopDataCollection shopDataCollection = new ShopDataCollection(shopDatas);
+        String json = gson.toJson(shopDataCollection);
+        try {
+            FileWriter writer = new FileWriter(getFile());
+            writer.write(json);
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loadData()
+    {
+        FileReader fileReader = null;
+        try {
+            fileReader = new FileReader(getFile());
+            BufferedReader reader = new BufferedReader(fileReader);
+            StringBuilder fileContent = new StringBuilder();
+            String line = null;
+            while((line = reader.readLine()) != null)
+            {
+                fileContent.append(line);
+            }
+            String content = fileContent.toString();
+            ShopDataCollection shops = gson.fromJson(content, ShopDataCollection.class);
+            for(ShopData sd : shops.getShops())
+                shopDatas.add(sd);
+            reader.close();
+            fileReader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

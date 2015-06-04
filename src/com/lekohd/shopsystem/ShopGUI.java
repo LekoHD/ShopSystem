@@ -2,14 +2,13 @@ package com.lekohd.shopsystem;
 
 import com.lekohd.shopsystem.item.ItemCreation;
 import com.lekohd.shopsystem.util.ItemType;
-import com.lekohd.shopsystem.villager.VillagerClass;
+import com.lekohd.shopsystem.entity.VillagerClass;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.Inventory;
 
 /**
