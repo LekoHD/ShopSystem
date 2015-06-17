@@ -28,10 +28,12 @@ public class VillagerClass {
      * Placing the shop villager at location
      * @param location is player location
      */
-    public static void place(Location location)
+    public static void place(Location location, String eName)
     {
         loc = location;
-        name = Locale.SHOP_GET_IT;
+        name = eName;
+        if(eName == null)
+            name = Locale.SHOP_GET_IT;
         Villager v;
         if(ShopSystem.settingsManager.getConfig().getBoolean("config.PlaceVillagerInMiddleOfBlock"))
         {
@@ -52,6 +54,35 @@ public class VillagerClass {
         v.setCanPickupItems(false);
         v.setProfession(Villager.Profession.FARMER);
         //v.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 356000, 356000));
+    }
+
+    public static Villager placeV(Location location, String eName)
+    {
+        loc = location;
+        name = eName;
+        if(eName == null)
+            name = Locale.SHOP_GET_IT;
+        Villager v;
+        if(ShopSystem.settingsManager.getConfig().getBoolean("config.PlaceVillagerInMiddleOfBlock"))
+        {
+            Location l = new Location(loc.getWorld(), loc.getBlockX() + 0.5, loc.getBlockY(), loc.getBlockZ() + 0.5, loc.getYaw(), loc.getPitch());
+            v = (Villager) l.getWorld().spawnEntity(l, EntityType.VILLAGER);
+        } else
+            v = (Villager) loc.getWorld().spawnEntity(loc, EntityType.VILLAGER);
+        try {
+            //ShopSystem.nmsManager.getProvider().noAI(v);
+            //ShopSystem.nmsManager.getProvider().overwriteVillagerAI(v);
+            ShopSystem.nmsManager.getProvider().noAI(v);
+        } catch (Exception e){
+            v.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 356000, 356000));
+        }
+
+        v.setCustomName(name);
+        v.setCustomNameVisible(true);
+        v.setCanPickupItems(false);
+        v.setProfession(Villager.Profession.FARMER);
+        //v.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 356000, 356000));
+        return v;
     }
 
     public static int getProfession(Player p)

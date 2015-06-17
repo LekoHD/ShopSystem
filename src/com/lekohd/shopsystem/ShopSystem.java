@@ -61,6 +61,7 @@ public class ShopSystem extends JavaPlugin {  //Empty Inventory Bug, Red Dot for
     public static HashMap<UUID, Boolean> editName = new HashMap<UUID, Boolean>();
     public static HashMap<UUID, Boolean> deleteShop = new HashMap<UUID, Boolean>();
     public static HashMap<UUID, Boolean> isEditingShop = new HashMap<UUID, Boolean>();
+    public static HashMap<UUID, Boolean> editArmor = new HashMap<UUID, Boolean>();
     public static ArrayList<ShopData> shopDatas = new ArrayList<ShopData>();
     public Gson gson;
 

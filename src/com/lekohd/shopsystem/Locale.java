@@ -47,5 +47,16 @@ public class Locale {
     public static String ITEM_BUY_LEFT_CLICK = "§8Left Click to buy all";
     public static String ITEM_EDIT_RIGHT_CLICK = "§8Right Click to edit price";
     public static String ITEM_EDIT_LEFT_CLICK = "§8Left Click to remove item";
+    public static String ITEM_CHANGE_ARMOR = "Change Entity Armor";
+    public static String ITEM_REMOVE_HELMET = "Remove Helmet";
+    public static String ITEM_REMOVE_CHESTPLATE = "Remove Chestplate";
+    public static String ITEM_REMOVE_LEGGINGS = "Remove Leggings";
+    public static String ITEM_REMOVE_BOOTS = "Remove Boots";
+    public static String ITEM_ADD_ARMOR = "Add Armor";
+    public static String ITEM_REMOVE_ALL_ARMOR = "Remove all armor";
+    public static String ITEM_CHANGE_ENTITY = "Change Entity";
+    public static String ITEM_BACK = "Back to Main menu";
+    public static String SHOP_CHANGE_ARMOR = "Change Armor";
+    public static String ENTER_CLICK_ARMOR = "Click Armor to add this to your Shop";
 
 }

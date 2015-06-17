@@ -6,9 +6,7 @@ import com.lekohd.shopsystem.item.ItemClass;
 import com.lekohd.shopsystem.manager.InventoryManager;
 import com.lekohd.shopsystem.manager.MessageManager;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Villager;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -56,11 +54,11 @@ public class ChatListener implements Listener {
                         Location vLoc = ShopSystem.playerInShop.get(p.getUniqueId());
                         if(vLoc.getBlockX() == loc.getBlockX() && vLoc.getBlockY() == loc.getBlockY() && vLoc.getBlockZ() == loc.getBlockZ() && vLoc.getWorld() == loc.getWorld())
                         {
-                            if(entity instanceof Villager)
+                            if(entity instanceof Villager || entity instanceof Zombie || entity instanceof Skeleton)
                             {
-                                Villager v = (Villager)entity;
-                                v.setCustomName(e.getMessage().replace("&","§"));
-                                v.setCustomNameVisible(true);
+
+                                entity.setCustomName(e.getMessage().replace("&","§"));
+                                entity.setCustomNameVisible(true);
                                 //return;
                                 MessageManager.getInstance().msg(e.getPlayer(), MessageManager.MessageType.INFO, Locale.ENTER_NAME_SUCCESS);
                             }
@@ -90,10 +88,10 @@ public class ChatListener implements Listener {
                             Location location = new Location(lo.getWorld(), lo.getBlockX(), lo.getBlockY(), lo.getBlockZ());
                             System.out.println("Entity: " + entity.getCustomName());
                             if (location.getBlockX() == loc.getBlockX() && location.getBlockY() == loc.getBlockY() && location.getBlockZ() == loc.getBlockZ() && location.getWorld() == loc.getWorld()) {
-                                if (entity instanceof Villager) {
-                                    Villager v = (Villager) entity;
-                                    v.setCustomName(Locale.SHOP_GET_IT);
-                                    v.setCustomNameVisible(true);
+                                if(entity instanceof Villager || entity instanceof Zombie || entity instanceof Skeleton)
+                                {
+                                    entity.setCustomName(Locale.SHOP_GET_IT);
+                                    entity.setCustomNameVisible(true);
                                     //return;
                                     MessageManager.getInstance().msg(p, MessageManager.MessageType.INFO, Locale.ENTER_DELETE_SHOP_SUCCESS);
                                 }
@@ -108,7 +106,6 @@ public class ChatListener implements Listener {
                 ShopSystem.deleteShop.put(p.getUniqueId(), false);
             }
         }
-
     }
 
 }

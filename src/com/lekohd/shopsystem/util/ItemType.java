@@ -26,6 +26,15 @@ public enum ItemType
     LEAVE(Locale.ITEM_LEAVE, Material.ARROW, Locale.ITEM_LEAVE_LORE),
     CHANGEPROFESSION(Locale.ITEM_CHANGE_PROFESSION, Material.WOOL, null),
     NULL_ITEM("", Material.THIN_GLASS, null),
+    CHANGEARMORMENU(Locale.ITEM_CHANGE_ARMOR, Material.SKULL_ITEM, null),
+    ADDARMOR(Locale.ITEM_ADD_ARMOR, Material.ARMOR_STAND, null),
+    REMOVEALLARMOR(Locale.ITEM_REMOVE_ALL_ARMOR, Material.BARRIER, null),
+    REMOVEHELMET(Locale.ITEM_REMOVE_HELMET, Material.LEATHER_HELMET, null),
+    REMOVECHESTPLATE(Locale.ITEM_REMOVE_CHESTPLATE, Material.LEATHER_CHESTPLATE, null),
+    REMOVELEGGINGS(Locale.ITEM_REMOVE_LEGGINGS, Material.LEATHER_LEGGINGS, null),
+    REMOVEBOOTS(Locale.ITEM_REMOVE_BOOTS, Material.LEATHER_BOOTS, null),
+    CHANGEENTITY(Locale.ITEM_CHANGE_ENTITY, Material.MAGMA_CREAM, null),
+    BACK(Locale.ITEM_BACK, Material.ARROW, null),
     SAVESHOP(Locale.ITEM_SHOP_SAVE, Material.MAP, null);
 
     private String name;

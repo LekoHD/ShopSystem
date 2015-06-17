@@ -31,10 +31,12 @@ public class ZombieClass {
      * Placing the shop villager at location
      * @param location is player location
      */
-    public static void place(Location location)
+    public static void place(Location location, String eName)
     {
         loc = location;
-        name = Locale.SHOP_GET_IT;
+        name = eName;
+        if(eName == null)
+            name = Locale.SHOP_GET_IT;
         Zombie z;
         if(ShopSystem.settingsManager.getConfig().getBoolean("config.PlaceVillagerInMiddleOfBlock"))
         {
@@ -54,6 +56,58 @@ public class ZombieClass {
         z.setCustomNameVisible(true);
         z.setCanPickupItems(false);
         z.setVillager(false);
+    }
+
+    public static Zombie placeZ(Location location, String eName)
+    {
+        loc = location;
+        name = eName;
+        if(eName == null)
+            name = Locale.SHOP_GET_IT;
+        Zombie z;
+        if(ShopSystem.settingsManager.getConfig().getBoolean("config.PlaceVillagerInMiddleOfBlock"))
+        {
+            Location l = new Location(loc.getWorld(), loc.getBlockX() + 0.5, loc.getBlockY(), loc.getBlockZ() + 0.5, loc.getYaw(), loc.getPitch());
+            z = (Zombie) l.getWorld().spawnEntity(l, EntityType.ZOMBIE);
+        } else
+            z = (Zombie) loc.getWorld().spawnEntity(loc, EntityType.ZOMBIE);
+        try {
+            //ShopSystem.nmsManager.getProvider().noAI(v);
+            //ShopSystem.nmsManager.getProvider().overwriteVillagerAI(v);
+            ShopSystem.nmsManager.getProvider().noAI(z);
+        } catch (Exception e){
+            z.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 356000, 356000));
+        }
+
+        z.setCustomName(name);
+        z.setCustomNameVisible(true);
+        z.setCanPickupItems(false);
+        z.setVillager(false);
+        return z;
+    }
+
+    public static void removeHelmet(Zombie zombie)
+    {
+        Zombie e = zombie;
+        e.getEquipment().setHelmet(new ItemStack(Material.AIR));
+    }
+
+    public static void removeChestPlate(Zombie zombie)
+    {
+        Zombie e = zombie;
+        e.getEquipment().setChestplate(new ItemStack(Material.AIR));
+    }
+
+    public static void removeLeggings(Zombie zombie)
+    {
+        Zombie e = zombie;
+        e.getEquipment().setLeggings(new ItemStack(Material.AIR));
+    }
+
+    public static void removeBoots(Zombie zombie)
+    {
+        Zombie e = zombie;
+        e.getEquipment().setBoots(new ItemStack(Material.AIR));
     }
 
     /**
@@ -86,7 +140,7 @@ public class ZombieClass {
             else
             if(material == Material.CHAINMAIL_CHESTPLATE || material == Material.DIAMOND_CHESTPLATE || material == Material.GOLD_CHESTPLATE || material == Material.IRON_CHESTPLATE || material == Material.LEATHER_CHESTPLATE)
             {
-                equipment.setLeggings(item);
+                equipment.setChestplate(item);
             }
             else
             if(material == Material.CHAINMAIL_HELMET || material == Material.DIAMOND_HELMET || material == Material.GOLD_HELMET || material == Material.IRON_HELMET || material == Material.LEATHER_HELMET)

@@ -76,7 +76,7 @@ public class Commands implements CommandExecutor { //Command: /shop...
                 if(args[0].equalsIgnoreCase("place"));
                 {
                     //Place Villager
-                    VillagerClass.place(sender.getLocation());
+                    VillagerClass.place(sender.getLocation(), null);
                     return true;
                 }
             }
