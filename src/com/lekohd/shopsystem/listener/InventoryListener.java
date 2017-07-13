@@ -544,7 +544,7 @@ public class InventoryListener
             }
         } else if (inventoryManager.getShopMode().equals(ShopMode.SELL))
         {
-            //TODO: Moving to the Listener, creating method sellItem
+            //TODO: Moving to the Listener, creating method 'sellItem'
         }
         return inventoryManager;
     }
