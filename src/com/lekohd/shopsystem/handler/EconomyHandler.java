@@ -83,4 +83,9 @@ public class EconomyHandler {
         }
     }
 
+    public static void addMoney(Player seller, int amount){
+        EconomySystem.addCoins(seller, amount);
+    }
+
+
 }

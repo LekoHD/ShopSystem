@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.lekohd.shopsystem.util.ShopMode;
+import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -171,9 +172,11 @@ public class InventoryListener
                         else
                             invMa = buyItem((InventoryManager)DataManager.shopInventory.get(ShopSystem.playerInShop.get(p.getUniqueId())), e.getSlot(), p, owner, false);
                         DataManager.shopInventory.put(ShopSystem.playerInShop.get(p.getUniqueId()), invMa);
-                        ItemStack itemStack = e.getCurrentItem().clone();
-                        itemStack.setAmount(1);
-                        p.getInventory().addItem(new ItemStack[] { removeLore(itemStack) });
+                        if(invMa.getShopMode().equals(ShopMode.BUY)) {
+                            ItemStack itemStack = e.getCurrentItem().clone();
+                            itemStack.setAmount(1);
+                            p.getInventory().addItem(new ItemStack[]{removeLore(itemStack)});
+                        }
                     } catch (ItemBuyException exeption) {
                         exeption.printStackTrace();
                     }
@@ -191,9 +194,11 @@ public class InventoryListener
                         else
                             invMa = buyItem((InventoryManager)DataManager.shopInventory.get(ShopSystem.playerInShop.get(p.getUniqueId())), e.getSlot(), p, owner, true);
                         DataManager.shopInventory.put(ShopSystem.playerInShop.get(p.getUniqueId()), invMa);
-                        ItemStack itemStack = item.getItem();
-                        itemStack.setAmount(item.getAmount());
-                        p.getInventory().addItem(new ItemStack[] { removeLore(itemStack) });
+                        if(invMa.getShopMode().equals(ShopMode.BUY)) {
+                            ItemStack itemStack = item.getItem();
+                            itemStack.setAmount(item.getAmount());
+                            p.getInventory().addItem(new ItemStack[]{removeLore(itemStack)});
+                        }
                     } catch (ItemBuyException exeption) {
                         exeption.printStackTrace();
                     }
@@ -544,7 +549,56 @@ public class InventoryListener
             }
         } else if (inventoryManager.getShopMode().equals(ShopMode.SELL))
         {
-            //TODO: Moving to the Listener, creating method 'sellItem'
+            //TODO: Remove money from seller
+            boolean hasRequiredAmount;
+            if(buyer.getInventory().contains(item.getItem().getType())) {
+                int amount = 0;
+                if (buyAll) {
+                    ItemStack[] itemStacks = buyer.getInventory().getContents();
+                    for(int i = 0; i < itemStacks.length; i++)
+                    {
+                        if(itemStacks[i] != null && itemStacks[i].getType().equals(item.getItem().getType()) && itemStacks[i].getData().equals(item.getItem().getData()) && itemStacks[i].getEnchantments().equals(item.getItem().getEnchantments())){
+
+                            if(item.getAmount() + amount + itemStacks[i].getAmount() <= 64) {
+
+                                amount += itemStacks[i].getAmount();
+                                //itemStacks = (ItemStack[])ArrayUtils.removeElement(itemStacks, i);
+                                buyer.getInventory().remove(itemStacks[i]);
+                            }
+                        }
+                    }
+                    /*
+                    buyer.getInventory().setContents(itemStacks);
+                    buyer.getInventory().remove();
+                    System.out.println(itemStacks);
+                    */
+                    buyer.updateInventory();
+                } else {
+
+                    //ItemStack[] itemStacks = buyer.getInventory().getContents();
+                    for(int i = 0; i < buyer.getInventory().getSize(); i++){
+                        ItemStack itm = buyer.getInventory().getItem(i);
+                        if(itm != null && itm.getType().equals(item.getItem().getType()) && itm.getData().equals(item.getItem().getData()) && itm.getEnchantments().equals(item.getItem().getEnchantments())){
+                            if(item.getAmount() + 1 <= 64) {
+                                int amt = itm.getAmount() - 1;
+                                itm.setAmount(amt);
+                                amount += 1;
+                                buyer.getInventory().setItem(i, amt > 0 ? itm : null);
+                                break;
+                            }
+                        }
+                    }
+                    buyer.updateInventory();
+                }
+                if(amount > 0){
+                    item.setAmount(item.getAmount() + amount);
+                    inventoryManager.addItem(item);
+                    EconomyHandler.addMoney(buyer, item.getPrice() * amount);
+                    MessageManager.getInstance().msg(buyer, MessageType.INFO, Locale.ECONOMY_SOLD_ITEM.replace("%AMOUNT%", amount + "").replace("%PRICE%", item.getPrice() * amount + "").replace("%BUYER%", seller.getName()));
+                }
+            }
+            else
+                MessageManager.getInstance().msg(buyer, MessageType.ERROR, Locale.MISSING_ITEM);
         }
         return inventoryManager;
     }
@@ -553,48 +607,92 @@ public class InventoryListener
     {
         ArrayList items = inventoryManager.getItems();
         ItemClass item = (ItemClass)items.get(slot);
-        boolean requiredAmount = EconomyHandler.hasRequiredAmount(buyer, item.getPrice());
-        if (buyAll)
-            requiredAmount = EconomyHandler.hasRequiredAmount(buyer, item.getPrice() * item.getAmount());
-        if (item.getAmount() == -1)
-        {
-            return inventoryManager;
-        }
-        try {
+        if(inventoryManager.getShopMode().equals(ShopMode.BUY)) {
+            boolean requiredAmount = EconomyHandler.hasRequiredAmount(buyer, item.getPrice());
             if (buyAll)
-            {
-                EconomyHandler.transferMoney(buyer, seller, item.getPrice() * item.getAmount());
+                requiredAmount = EconomyHandler.hasRequiredAmount(buyer, item.getPrice() * item.getAmount());
+            if (item.getAmount() == -1) {
+                return inventoryManager;
             }
-            else EconomyHandler.transferMoney(buyer, seller, item.getPrice());
-        }
-        catch (NotEnoughMoneyException ex)
-        {
-            throw new NotEnoughMoneyException();
-        }
-        OfflinePlayer p = Bukkit.getOfflinePlayer(seller);
-        if (buyAll)
-        {
-            if (((requiredAmount) && (!p.isOp())) || (!ShopSystem.settingsManager.getConfig().getBoolean("config.EnableOpShops")))
-                inventoryManager.addItem(new ItemClass(new ItemStack(Material.THIN_GLASS), -1, -1, slot));
-            return inventoryManager;
-        }
-        if (item.getAmount() == 1)
-        {
-            if (((requiredAmount) && (!p.isOp())) || (!ShopSystem.settingsManager.getConfig().getBoolean("config.EnableOpShops"))) {
-                inventoryManager.addItem(new ItemClass(new ItemStack(Material.THIN_GLASS), -1, -1, slot));
+            try {
+                if (buyAll) {
+                    EconomyHandler.transferMoney(buyer, seller, item.getPrice() * item.getAmount());
+                } else EconomyHandler.transferMoney(buyer, seller, item.getPrice());
+            } catch (NotEnoughMoneyException ex) {
+                throw new NotEnoughMoneyException();
             }
+            OfflinePlayer p = Bukkit.getOfflinePlayer(seller);
+            if (buyAll) {
+                if (((requiredAmount) && (!p.isOp())) || (!ShopSystem.settingsManager.getConfig().getBoolean("config.EnableOpShops")))
+                    inventoryManager.addItem(new ItemClass(new ItemStack(Material.THIN_GLASS), -1, -1, slot));
+                return inventoryManager;
+            }
+            if (item.getAmount() == 1) {
+                if (((requiredAmount) && (!p.isOp())) || (!ShopSystem.settingsManager.getConfig().getBoolean("config.EnableOpShops"))) {
+                    inventoryManager.addItem(new ItemClass(new ItemStack(Material.THIN_GLASS), -1, -1, slot));
+                }
 
-        }
-        else if (item.getAmount() > 1)
-        {
-            if (((requiredAmount) && (!p.isOp())) || (!ShopSystem.settingsManager.getConfig().getBoolean("config.EnableOpShops"))) {
-                item.setAmount(item.getAmount() - 1);
-                inventoryManager.addItem(item);
+            } else if (item.getAmount() > 1) {
+                if (((requiredAmount) && (!p.isOp())) || (!ShopSystem.settingsManager.getConfig().getBoolean("config.EnableOpShops"))) {
+                    item.setAmount(item.getAmount() - 1);
+                    inventoryManager.addItem(item);
+                }
+            } else if (item.getAmount() < -1) {
+                throw new ItemBuyException("Invalid item amount");
             }
+        } else if (inventoryManager.getShopMode().equals(ShopMode.SELL))
+        {
+            boolean hasRequiredAmount;
+            if(buyer.getInventory().contains(item.getItem().getType())) {
+                int amount = 0;
+                if (buyAll) {
+                    ItemStack[] itemStacks = buyer.getInventory().getContents();
+                    for(int i = 0; i < itemStacks.length; i++)
+                    {
+                        if(itemStacks[i] != null && itemStacks[i].getType().equals(item.getItem().getType()) && itemStacks[i].getData().equals(item.getItem().getData()) && itemStacks[i].getEnchantments().equals(item.getItem().getEnchantments())){
+
+                            if(item.getAmount() + amount + itemStacks[i].getAmount() <= 64) {
+
+                                amount += itemStacks[i].getAmount();
+                                //itemStacks = (ItemStack[])ArrayUtils.removeElement(itemStacks, i);
+                                buyer.getInventory().remove(itemStacks[i]);
+                            }
+                        }
+                    }
+                    /*
+                    buyer.getInventory().setContents(itemStacks);
+                    buyer.getInventory().remove();
+                    System.out.println(itemStacks);
+                    */
+                    buyer.updateInventory();
+                } else {
+
+                    //ItemStack[] itemStacks = buyer.getInventory().getContents();
+                    for(int i = 0; i < buyer.getInventory().getSize(); i++){
+                        ItemStack itm = buyer.getInventory().getItem(i);
+                        if(itm != null && itm.getType().equals(item.getItem().getType()) && itm.getData().equals(item.getItem().getData()) && itm.getEnchantments().equals(item.getItem().getEnchantments())){
+                            if(item.getAmount() + 1 <= 64) {
+                                int amt = itm.getAmount() - 1;
+                                itm.setAmount(amt);
+                                amount += 1;
+                                buyer.getInventory().setItem(i, amt > 0 ? itm : null);
+                                break;
+                            }
+                        }
+                    }
+                    buyer.updateInventory();
+                }
+                if(amount > 0){
+                    item.setAmount(item.getAmount() + amount);
+                    inventoryManager.addItem(item);
+                    EconomyHandler.addMoney(buyer, item.getPrice() * amount);
+                    MessageManager.getInstance().msg(buyer, MessageType.INFO, Locale.ECONOMY_SOLD_ITEM.replace("%AMOUNT%", amount + "").replace("%PRICE%", item.getPrice() * amount + "").replace("%BUYER%", "to this shop"));
+                }
+            }
+            else
+                MessageManager.getInstance().msg(buyer, MessageType.ERROR, Locale.MISSING_ITEM);
         }
-        else if (item.getAmount() < -1) {
-            throw new ItemBuyException("Invalid item amount");
-        }
+
 
         return inventoryManager;
     }

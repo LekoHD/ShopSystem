@@ -41,7 +41,7 @@ public class Locale {
     public static String ITEM_CHANGE_PROFESSION = "Change Villager Color";
     public static String ECONOMY_DONT_HAVE_ENOUGH_MONEY = "§4You don't have enough money to buy this item!";
     public static String ECONOMY_BUYING_SUCCESS = "You just bought an item for %PRICE% coins.";
-    public static String ECONOMY_SOLD_ITEM = "You just sold an item for %PRICE% to %BUYER%";
+    public static String ECONOMY_SOLD_ITEM = "You just sold %AMOUNT% item/s for %PRICE% to %BUYER%";
     public static String ITEM_AMOUNT = "§eIn Stock: §3%AMOUNT%";
     public static String ITEM_BUY_RIGHT_CLICK = "§8Right Click to buy one";
     public static String ITEM_BUY_LEFT_CLICK = "§8Left Click to buy all";
@@ -63,5 +63,6 @@ public class Locale {
     public static String ENTER_CLICK_ARMOR = "Click Armor to add this to your Shop";
     public static String BUY_MODE = "Users can now buy from your Shop";
     public static String SELL_MODE = "Users can now sell to your Shop";
+    public static String MISSING_ITEM = "You don't have that in you inventory";
 
 }

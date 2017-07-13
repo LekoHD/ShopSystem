@@ -3,6 +3,7 @@ package com.lekohd.shopsystem.manager;
 import com.lekohd.shopsystem.ShopData;
 import com.lekohd.shopsystem.ShopSystem;
 import com.lekohd.shopsystem.item.ItemClass;
+import com.lekohd.shopsystem.util.ShopMode;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -68,6 +69,7 @@ public class DataManager {
                         shop.put(loc, UUID.fromString(uuid));
                         shopOwnerUUID.put(UUID.fromString(uuid),UUID.fromString(data.getString(path + ".owner")));
                         InventoryManager inventoryManager = new InventoryManager(45);
+                        inventoryManager.setShopMode(ShopMode.valueOf(data.getString(path + ".shopMode")));
                         if(data.isConfigurationSection(path + ".item")) {
                             for (String slot : data.getConfigurationSection(path + ".item").getKeys(false)) {
                                 String p = path;
@@ -114,6 +116,7 @@ public class DataManager {
         String path = "Locations." + x + "." + y + "." + z + "." + world;
         data.set(path + ".owner", owner.toString());
         data.set(path + ".shopUUID", shopUUID.toString());
+        data.set(path + ".shopMode", inventoryManager.getShopMode().toString());
 
         ArrayList<ItemClass> items = inventoryManager.getItems();
         data.set(path + ".item", null);
