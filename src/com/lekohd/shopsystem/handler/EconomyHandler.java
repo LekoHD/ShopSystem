@@ -48,11 +48,11 @@ public class EconomyHandler {
                 if (seller.isOp()) {
                     if (!ShopSystem.settingsManager.getConfig().getBoolean("config.NoMoneyForOps")) {
                         EconomySystem.addCoins(seller, amount);
-                        MessageManager.getInstance().msg(seller, MessageManager.MessageType.INFO, Locale.ECONOMY_SOLD_ITEM.replace("%PRICE%", amount + "").replace("%BUYER%", buyer.getName()));
+                        MessageManager.getInstance().msg(seller, MessageManager.MessageType.INFO, Locale.ECONOMY_SOLD_ITEM.replace("%PRICE%", amount + "").replace("%BUYER%", buyer.getName()).replace("%AMOUNT%", "a few"));
                     }
                 } else {
                     EconomySystem.addCoins(seller, amount);
-                    MessageManager.getInstance().msg(seller, MessageManager.MessageType.INFO, Locale.ECONOMY_SOLD_ITEM.replace("%PRICE%", amount + "").replace("%BUYER%", buyer.getName()));
+                    MessageManager.getInstance().msg(seller, MessageManager.MessageType.INFO, Locale.ECONOMY_SOLD_ITEM.replace("%PRICE%", amount + "").replace("%BUYER%", buyer.getName()).replace("%AMOUNT%", "a few"));
                 }
 
             MessageManager.getInstance().msg(buyer, MessageManager.MessageType.INFO, Locale.ECONOMY_BUYING_SUCCESS.replace("%PRICE%", amount + ""));
