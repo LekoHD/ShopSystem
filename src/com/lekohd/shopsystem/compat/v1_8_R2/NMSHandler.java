@@ -1,11 +1,11 @@
 package com.lekohd.shopsystem.compat.v1_8_R2;
 
 import com.lekohd.shopsystem.compat.NMSCallProvider;
-import net.minecraft.server.v1_8_R2.NBTTagCompound;
+/*import net.minecraft.server.v1_8_R2.NBTTagCompound;
 import net.minecraft.server.v1_8_R2.*;
 import org.bukkit.craftbukkit.v1_8_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_8_R2.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_8_R2.entity.CraftVillager;
+import org.bukkit.craftbukkit.v1_8_R2.entity.CraftVillager;*/
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Villager;
@@ -19,9 +19,9 @@ import java.util.List;
  * <p/>
  * Copyright (C) 2014 Leon167 { LekoHD
  */
-public class NMSHandler implements NMSCallProvider{
+public class NMSHandler /*implements NMSCallProvider*/{
 
-    public String getVersionId()
+    /*public String getVersionId()
     {
         return "1_8_R2";
     }
@@ -131,5 +131,5 @@ public class NMSHandler implements NMSCallProvider{
         net.minecraft.server.v1_8_R2.Entity mcEntity = ((org.bukkit.craftbukkit.v1_8_R2.entity.CraftEntity)entity).getHandle();
         mcEntity.b(silent);
     }
-
+*/
 }

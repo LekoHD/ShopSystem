@@ -3,7 +3,6 @@ package com.lekohd.shopsystem;
 import com.lekohd.shopsystem.item.ItemCreation;
 import com.lekohd.shopsystem.util.ItemType;
 import com.lekohd.shopsystem.entity.VillagerClass;
-import net.minecraft.server.v1_8_R2.Village;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -23,6 +22,8 @@ public class ShopGUI {
         Inventory inv = Bukkit.createInventory(null, 9, Locale.SHOP_MENU);
         inv.setItem(0, ItemType.EDITSHOP.getItem());
         inv.setItem(1, ItemType.DELETESHOP.getItem());
+        if (p.hasPermission("shopsystem.shop.changeMode"))
+            inv.setItem(2, ItemType.CHANGEMODE.getItem());
         if (p.hasPermission("shopsystem.shop.changeName"))
             inv.setItem(3, ItemType.CHANGENAME.getItem());
         inv.setItem(4, ItemType.SHOWSHOP.getItem());

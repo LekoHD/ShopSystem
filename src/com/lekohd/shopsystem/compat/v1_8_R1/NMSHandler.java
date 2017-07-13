@@ -1,10 +1,11 @@
-package com.lekohd.shopsystem.compat.v1_8_R3;
+package com.lekohd.shopsystem.compat.v1_8_R1;
 
 import com.lekohd.shopsystem.compat.NMSCallProvider;
-/*import net.minecraft.server.v1_8_R3.*;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftVillager;*/
+import net.minecraft.server.v1_8_R1.*;
+import net.minecraft.server.v1_8_R1.NBTTagCompound;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftVillager;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Villager;
@@ -18,18 +19,18 @@ import java.util.List;
  * <p/>
  * Copyright (C) 2014 Leon167 { LekoHD
  */
-public class NMSHandler /*implements NMSCallProvider*/{
+public class NMSHandler implements NMSCallProvider{
 
     public String getVersionId()
     {
-        return "1_8_R3";
+        return "1_8_R1";
     }
 
-    /*public void noAI(Entity bukkitEntity) {
-        net.minecraft.server.v1_8_R3.Entity nmsEntity = ((CraftEntity) bukkitEntity).getHandle();
-        NBTTagCompound tag = nmsEntity.getNBTTag();
+    public void noAI(Entity bukkitEntity) {
+        net.minecraft.server.v1_8_R1.Entity nmsEntity = ((org.bukkit.craftbukkit.v1_8_R1.entity.CraftEntity) bukkitEntity).getHandle();
+        net.minecraft.server.v1_8_R1.NBTTagCompound tag = nmsEntity.getNBTTag();
         if (tag == null) {
-            tag = new NBTTagCompound();
+            tag = new net.minecraft.server.v1_8_R1.NBTTagCompound();
         }
         nmsEntity.c(tag);
         tag.setInt("NoAI", 1);
@@ -125,10 +126,10 @@ public class NMSHandler /*implements NMSCallProvider*/{
         ((CraftVillager)villager).getHandle().setProfession(profession);
     }
 
-    public void setEntitySilent(org.bukkit.entity.Entity entity, boolean silent)
+    public void setEntitySilent(Entity entity, boolean silent)
     {
-        net.minecraft.server.v1_8_R3.Entity mcEntity = ((CraftEntity)entity).getHandle();
+        net.minecraft.server.v1_8_R1.Entity mcEntity = ((org.bukkit.craftbukkit.v1_8_R1.entity.CraftEntity)entity).getHandle();
         mcEntity.b(silent);
-    }*/
+    }
 
 }

@@ -14,10 +14,10 @@ import java.util.UUID;
  */
 public class ShopData {
 
-    int x,y,z;
-    String world;
-    String owner;
-    InventoryManager inventoryManager;
+    private int x,y,z;
+    private String world;
+    private String owner;
+    private InventoryManager inventoryManager;
 
     public ShopData(Location loc, UUID owner, InventoryManager inventoryManager)
     {

@@ -43,8 +43,10 @@ public class Locale {
     public static String ECONOMY_BUYING_SUCCESS = "You just bought an item for %PRICE% coins.";
     public static String ECONOMY_SOLD_ITEM = "You just sold an item for %PRICE% to %BUYER%";
     public static String ITEM_AMOUNT = "§eIn Stock: §3%AMOUNT%";
-    public static String ITEM_BUY_RIGHT_CLICK = "§8Right Click to buy 1";
+    public static String ITEM_BUY_RIGHT_CLICK = "§8Right Click to buy one";
     public static String ITEM_BUY_LEFT_CLICK = "§8Left Click to buy all";
+    public static String ITEM_SELL_RIGHT_CLICK = "§8Right Click to sell one";
+    public static String ITEM_SELL_LEFT_CLICK = "§8Left Click to sell all items from your inventory";
     public static String ITEM_EDIT_RIGHT_CLICK = "§8Right Click to edit price";
     public static String ITEM_EDIT_LEFT_CLICK = "§8Left Click to remove item";
     public static String ITEM_CHANGE_ARMOR = "Change Entity Armor";
@@ -56,7 +58,10 @@ public class Locale {
     public static String ITEM_REMOVE_ALL_ARMOR = "Remove all armor";
     public static String ITEM_CHANGE_ENTITY = "Change Entity";
     public static String ITEM_BACK = "Back to Main menu";
+    public static String ITEM_CHANGE_MODE = "Change mode";
     public static String SHOP_CHANGE_ARMOR = "Change Armor";
     public static String ENTER_CLICK_ARMOR = "Click Armor to add this to your Shop";
+    public static String BUY_MODE = "Users can now buy from your Shop";
+    public static String SELL_MODE = "Users can now sell to your Shop";
 
 }

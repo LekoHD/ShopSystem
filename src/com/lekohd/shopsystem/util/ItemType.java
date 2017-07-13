@@ -35,7 +35,8 @@ public enum ItemType
     REMOVEBOOTS(Locale.ITEM_REMOVE_BOOTS, Material.LEATHER_BOOTS, null),
     CHANGEENTITY(Locale.ITEM_CHANGE_ENTITY, Material.MAGMA_CREAM, null),
     BACK(Locale.ITEM_BACK, Material.ARROW, null),
-    SAVESHOP(Locale.ITEM_SHOP_SAVE, Material.MAP, null);
+    SAVESHOP(Locale.ITEM_SHOP_SAVE, Material.MAP, null),
+    CHANGEMODE(Locale.ITEM_CHANGE_MODE, Material.BLAZE_POWDER, null);
 
     private String name;
     private Material type;

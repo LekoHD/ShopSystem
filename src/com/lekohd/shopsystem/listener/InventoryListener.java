@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+
+import com.lekohd.shopsystem.util.ShopMode;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -269,10 +271,32 @@ public class InventoryListener
                     }
                     e.setCancelled(true);
                 }
+                if (e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase(ItemType.CHANGEMODE.getName()))
+                {
+                    Player p = (Player)e.getWhoClicked();
+
+                    //TODO: Buy, Sell mode
+
+                    InventoryManager inventoryManager = DataManager.shopInventory.get(ShopSystem.playerInShop.get(p.getUniqueId()));
+
+                    if (inventoryManager.getShopMode().equals(ShopMode.BUY))
+                    {
+                        inventoryManager.setShopMode(ShopMode.SELL);
+                        DataManager.shopInventory.put(ShopSystem.playerInShop.get(p.getUniqueId()), inventoryManager);
+                        MessageManager.getInstance().msg(p, MessageManager.MessageType.INFO, Locale.SELL_MODE);
+                    } else if (inventoryManager.getShopMode().equals(ShopMode.SELL))
+                    {
+                        inventoryManager.setShopMode(ShopMode.BUY);
+                        DataManager.shopInventory.put(ShopSystem.playerInShop.get(p.getUniqueId()), inventoryManager);
+                        MessageManager.getInstance().msg(p, MessageManager.MessageType.INFO, Locale.BUY_MODE);
+                    }
+                    e.setCancelled(true);
+                    p.closeInventory();
+                }
                 if (e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase(ItemType.CHANGENAME.getName()))
                 {
                     Player p = (Player)e.getWhoClicked();
-                    ShopSystem.editName.put(p.getUniqueId(), Boolean.valueOf(true));
+                    ShopSystem.editName.put(p.getUniqueId(), true);
                     MessageManager.getInstance().msg(p, MessageManager.MessageType.INFO, Locale.ENTER_NAME);
                     e.setCancelled(true);
                     p.closeInventory();
@@ -486,46 +510,42 @@ public class InventoryListener
     {
         ArrayList items = inventoryManager.getItems();
         ItemClass item = (ItemClass)items.get(slot);
-        boolean requiredAmount = EconomyHandler.hasRequiredAmount(buyer, item.getPrice());
-        if (item.getAmount() == -1)
-        {
-            return inventoryManager;
-        }
-        try {
+        if(inventoryManager.getShopMode().equals(ShopMode.BUY)) {
+            boolean requiredAmount = EconomyHandler.hasRequiredAmount(buyer, item.getPrice());
             if (buyAll)
-            {
-                EconomyHandler.transferMoney(buyer, seller, item.getPrice() * item.getAmount());
+                requiredAmount = EconomyHandler.hasRequiredAmount(buyer, item.getPrice() * item.getAmount());
+            if (item.getAmount() == -1) {
+                return inventoryManager;
             }
-            else EconomyHandler.transferMoney(buyer, seller, item.getPrice());
-        }
-        catch (NotEnoughMoneyException ex)
-        {
-            throw new NotEnoughMoneyException();
-        }
-        if (buyAll)
-        {
-            if (((requiredAmount) && ((!seller.isOp()) || (!seller.hasPermission("shopsystem.admin")))) || (!ShopSystem.settingsManager.getConfig().getBoolean("config.EnableOpShops")))
-                inventoryManager.addItem(new ItemClass(new ItemStack(Material.THIN_GLASS), -1, -1, slot));
-            return inventoryManager;
-        }
-        if (item.getAmount() == 1)
-        {
-            if (((requiredAmount) && ((!seller.isOp()) || (!seller.hasPermission("shopsystem.admin")))) || (!ShopSystem.settingsManager.getConfig().getBoolean("config.EnableOpShops"))) {
-                inventoryManager.addItem(new ItemClass(new ItemStack(Material.THIN_GLASS), -1, -1, slot));
+            try {
+                if (buyAll) {
+                    EconomyHandler.transferMoney(buyer, seller, item.getPrice() * item.getAmount());
+                } else EconomyHandler.transferMoney(buyer, seller, item.getPrice());
+            } catch (NotEnoughMoneyException ex) {
+                throw new NotEnoughMoneyException();
             }
+            if (buyAll) {
+                if (((requiredAmount) && ((!seller.isOp()) || (!seller.hasPermission("shopsystem.admin")))) || (!ShopSystem.settingsManager.getConfig().getBoolean("config.EnableOpShops")))
+                    inventoryManager.addItem(new ItemClass(new ItemStack(Material.THIN_GLASS), -1, -1, slot));
+                return inventoryManager;
+            }
+            if (item.getAmount() == 1) {
+                if (((requiredAmount) && ((!seller.isOp()) || (!seller.hasPermission("shopsystem.admin")))) || (!ShopSystem.settingsManager.getConfig().getBoolean("config.EnableOpShops"))) {
+                    inventoryManager.addItem(new ItemClass(new ItemStack(Material.THIN_GLASS), -1, -1, slot));
+                }
 
-        }
-        else if (item.getAmount() > 1)
-        {
-            if (((requiredAmount) && ((!seller.isOp()) || (!seller.hasPermission("shopsystem.admin")))) || (!ShopSystem.settingsManager.getConfig().getBoolean("config.EnableOpShops"))) {
-                item.setAmount(item.getAmount() - 1);
-                inventoryManager.addItem(item);
+            } else if (item.getAmount() > 1) {
+                if (((requiredAmount) && ((!seller.isOp()) || (!seller.hasPermission("shopsystem.admin")))) || (!ShopSystem.settingsManager.getConfig().getBoolean("config.EnableOpShops"))) {
+                    item.setAmount(item.getAmount() - 1);
+                    inventoryManager.addItem(item);
+                }
+            } else {
+                throw new ItemBuyException("Invalid item amount");
             }
+        } else if (inventoryManager.getShopMode().equals(ShopMode.SELL))
+        {
+            //TODO: Moving to the Listener, creating method sellItem
         }
-        else {
-            throw new ItemBuyException("Invalid item amount");
-        }
-
         return inventoryManager;
     }
 
@@ -534,6 +554,8 @@ public class InventoryListener
         ArrayList items = inventoryManager.getItems();
         ItemClass item = (ItemClass)items.get(slot);
         boolean requiredAmount = EconomyHandler.hasRequiredAmount(buyer, item.getPrice());
+        if (buyAll)
+            requiredAmount = EconomyHandler.hasRequiredAmount(buyer, item.getPrice() * item.getAmount());
         if (item.getAmount() == -1)
         {
             return inventoryManager;

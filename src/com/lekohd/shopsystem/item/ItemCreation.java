@@ -1,6 +1,7 @@
 package com.lekohd.shopsystem.item;
 
 import com.lekohd.shopsystem.Locale;
+import com.lekohd.shopsystem.util.ShopMode;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
@@ -24,7 +25,8 @@ public class ItemCreation {
     private int amount, professionID;
     private boolean admin;
     private MaterialData data;
-    ItemStack item;
+    private ItemStack item;
+    private ShopMode shopMode;
 
     public ItemCreation(String name, Material type, String lore, int amount, int professionID, boolean admin, MaterialData data) {
         this.name = name;
@@ -36,7 +38,7 @@ public class ItemCreation {
         this.data = data;
     }
 
-    public ItemCreation(String name, ItemStack item, String lore, int amount, int professionID, boolean admin, MaterialData data) {
+    public ItemCreation(String name, ItemStack item, String lore, int amount, int professionID, boolean admin, MaterialData data, ShopMode shopMode) {
         this.name = name;
         this.type = item.getType();
         this.lore = lore;
@@ -45,6 +47,7 @@ public class ItemCreation {
         this.admin = admin;
         this.data = data;
         this.item = item;
+        this.shopMode = shopMode;
     }
 
     public ItemStack getItem()
@@ -79,8 +82,16 @@ public class ItemCreation {
                 l.add(Locale.ITEM_EDIT_LEFT_CLICK);
             }
             else {
-                l.add(Locale.ITEM_BUY_RIGHT_CLICK);
-                l.add(Locale.ITEM_BUY_LEFT_CLICK);
+                if(this.shopMode.equals(ShopMode.BUY))
+                {
+                    l.add(Locale.ITEM_BUY_RIGHT_CLICK);
+                    l.add(Locale.ITEM_BUY_LEFT_CLICK);
+                }
+                else if (this.shopMode.equals(ShopMode.SELL))
+                {
+                    l.add(Locale.ITEM_SELL_RIGHT_CLICK);
+                    l.add(Locale.ITEM_SELL_LEFT_CLICK);
+                }
             }
             m.setLore(l);
         }

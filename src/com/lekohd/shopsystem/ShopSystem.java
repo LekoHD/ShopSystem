@@ -39,6 +39,9 @@ import java.util.logging.Logger;
  *   - shopsystem.admin
  *   - shopsystem.shop.changeProfession
  *   - shopsystem.shop.changeName
+ *   - shopsystem.shop.changeArmor
+ *   - shopsystem.shop.changeEntity
+ *   - shopsystem.shop.changeMode
  *   - shopsystem.shop.create.<amount> amount =< config.ShopsPerUser
  */
 

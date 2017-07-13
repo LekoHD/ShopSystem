@@ -7,4 +7,5 @@ main: com.lekohd.shopsystem.ShopSystem
 commands:
   shop:
     aliases: [sh, sp]
-
+    description: Place or remove a Shop
+    usage: /shop place/remove - place/remove a shop on your position

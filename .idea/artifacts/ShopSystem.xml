@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="ShopSystem">
+    <output-path>$PROJECT_DIR$/out/artifacts/ShopSystem</output-path>
+    <root id="archive" name="ShopSystem.jar">
+      <element id="module-output" name="ShopSystem" />
+      <element id="library" level="project" name="gson-2.8.1" />
+    </root>
+  </artifact>
+</component>

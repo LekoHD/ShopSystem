@@ -4,6 +4,7 @@ import com.lekohd.shopsystem.Locale;
 import com.lekohd.shopsystem.item.ItemClass;
 import com.lekohd.shopsystem.item.ItemCreation;
 import com.lekohd.shopsystem.util.ItemType;
+import com.lekohd.shopsystem.util.ShopMode;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -19,9 +20,17 @@ import java.util.ArrayList;
  */
 public class InventoryManager {
 
-    int size;
+    private int size;
+    private ShopMode shopMode;
+    private ArrayList<ItemClass> items = new ArrayList<ItemClass>();
 
-    public ArrayList<ItemClass> items = new ArrayList<ItemClass>();
+    public void setShopMode(ShopMode shopMode){
+        this.shopMode = shopMode;
+    }
+
+    public ShopMode getShopMode(){
+        return this.shopMode;
+    }
 
     public InventoryManager (int size)
     {
@@ -30,6 +39,7 @@ public class InventoryManager {
         {
             items.add(new ItemClass(ItemType.NULL_ITEM.getItem(), -1, -1, i));
         }
+        this.shopMode = ShopMode.BUY;
     }
 
     public void addItem(ItemClass item)
@@ -56,7 +66,7 @@ public class InventoryManager {
                 continue;
             } else {
                 ItemClass item = items.get(i);
-                ItemCreation it = new ItemCreation(null, item.getItem(), item.getPrice() + "", item.getAmount(), -1, true, null);
+                ItemCreation it = new ItemCreation(null, item.getItem(), item.getPrice() + "", item.getAmount(), -1, true, null, this.shopMode);
                 inv.setItem(item.getSlot(), it.getItem());
             }
         }
@@ -77,7 +87,7 @@ public class InventoryManager {
                 continue;
             } else {
                 ItemClass item = items.get(i);
-                ItemCreation it = new ItemCreation(null, item.getItem(), item.getPrice() + "", item.getAmount(), -1, false, null);
+                ItemCreation it = new ItemCreation(null, item.getItem(), item.getPrice() + "", item.getAmount(), -1, false, null, this.shopMode);
                 inv.setItem(item.getSlot(), it.getItem());
             }
         }
